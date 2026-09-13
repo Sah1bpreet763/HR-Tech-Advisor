@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+{% block title %}HR Health Audit Results — HR-Tech Advisor{% endblock %}
+
+{% block extra_css %}
+<style>
+  .score-gauge-box {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(124, 58, 237, 0.08) 100%);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+  }
+
+  .score-number {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .gap-card {
+    border-left: 4px solid var(--card-border);
+    transition: transform 0.15s ease;
+  }
+  .gap-card:hover {
+    transform: translateY(-2px);
+  }
+  .gap-card.priority-high {
+    border-left-color: var(--danger-color);
+  }
+  .gap-card.priority-medium {
+    border-left-color: var(--warning-color);
+  }
+  .gap-card.priority-low {
+    border-left-color: var(--success-color);
+  }
+
+  .tool-card {
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    background-color: var(--card-bg);
+    transition: all 0.2s ease;
+  }
+  .tool-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: #a5b4fc;
+  }
+
+  .roadmap-step-card {
+    position: relative;
+    border-left: 3px solid var(--primary-color);
+    padding-left: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .roadmap-step-card::before {
+    content: "";
+    position: absolute;
+    left: -8px;
+    top: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-11 col-xl-10">
+    
+    <!-- Top Action Bar -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+      <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <span class="badge bg-success-subtle text-success fw-bold px-2 py-1">
+            <i class="bi bi-patch-check-fill me-1"></i> Audit Completed
+          </span>
+          <span class="text-muted small">Diagnostic ID #{{ audit_id }}</span>
+        </div>
+        <h2 class="fw-bold mb-0">{{ startup.company_name }} — HR Health Diagnostic</h2>
+        <div class="text-muted small mt-1">
+          <span><i class="bi bi-people me-1"></i> {{ startup.team_size|default:"—" }} employees</span> &bull; 
+          <span><i class="bi bi-wallet2 me-1"></i> ₹{{ startup.hr_budget_monthly|default:"—" }}/month budget</span> &bull;
+          <span><i class="bi bi-briefcase me-1"></i> {{ startup.industry|default:"Startup" }}</span>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <a href="{% url 'dashboard:audit_pdf' audit_id %}" class="btn btn-outline-primary" target="_blank">
+          <i class="bi bi-file-earmark-pdf-fill me-1 text-danger"></i> Download PDF Report
+        </a>
+        <a href="{% url 'dashboard:questionnaire' %}" class="btn btn-primary">
+          <i class="bi bi-arrow-repeat me-1"></i> Retake Audit
+        </a>
+      </div>
+    </div>
+
+    <!-- 1. Overall Health Score Gauge Box -->
+    <div class="score-gauge-box shadow-sm mb-4">
+      <div class="row align-items-center g-4">
+        <div class="col-md-5 text-center text-md-start border-md-end">
+          <div class="text-uppercase tracking-wider small fw-bold text-muted mb-1">Your HR Health Score</div>
+          <div class="d-flex align-items-baseline justify-content-center justify-content-md-start gap-2">
+            <span class="score-number {% if audit_result.overall_score >= 80 %}text-success{% elif audit_result.overall_score >= 60 %}text-primary{% elif audit_result.overall_score >= 40 %}text-warning{% else %}text-danger{% endif %}">
+              {{ audit_result.overall_score|floatformat:0 }}
+            </span>
+            <span class="fs-4 text-muted">/ 100</span>
+          </div>
+          <div class="mt-2">
+            <span class="badge fs-6 px-3 py-2 fw-bold {% if audit_result.overall_score >= 80 %}bg-success text-white{% elif audit_result.overall_score >= 60 %}bg-primary text-white{% elif audit_result.overall_score >= 40 %}bg-warning text-dark{% else %}bg-danger text-white{% endif %}">
+              {{ audit_result.status }}
+            </span>
+          </div>
+        </div>
+
+        <div class="col-md-7">
+          <h5 class="fw-bold mb-2">Executive Diagnostic Summary</h5>
+          <p class="text-muted small mb-3">
+            Based on our 30-question diagnostic framework across Recruitment, Payroll, Attendance, Performance Management, Employee Engagement, and HR Analytics.
+          </p>
+          <div class="p-3 bg-body rounded border">
+            {% if audit_result.overall_score >= 80 %}
+              <div class="d-flex align-items-start gap-2">
+                <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                <div class="small">
+                  <strong>Strong HR Maturity:</strong> Your company demonstrates structured, modern HR processes with established tooling. Focus on fine-tuning employee engagement and predictive analytics to scale smoothly.
+                </div>
+              </div>
+            {% elif audit_result.overall_score >= 60 %}
+              <div class="d-flex align-items-start gap-2">
+                <i class="bi bi-info-circle-fill text-primary fs-5"></i>
+                <div class="small">
+                  <strong>Healthy with Key Optimization Areas:</strong> Core operational practices are functional, but manual processes in 1–2 domains are likely eating founder time and introducing operational friction.
+                </div>
+              </div>
+            {% elif audit_result.overall_score >= 40 %}
+              <div class="d-flex align-items-start gap-2">
+                <i class="bi bi-exclamation-triangle-fill text-warning fs-5"></i>
+                <div class="small">
+                  <strong>Moderate Compliance & Operational Risk:</strong> Heavy reliance on spreadsheets and informal discussions is creating administrative bottlenecks and turnover vulnerability. Tooling is strongly recommended.
+                </div>
+              </div>
+            {% else %}
+              <div class="d-flex align-items-start gap-2">
+                <i class="bi bi-shield-x text-danger fs-5"></i>
+                <div class="small">
+                  <strong>High Risk / Manual Overhead:</strong> Fundamental HR workflows (payroll compliance, attendance tracking, role reviews) are largely ad-hoc. Immediate automation is needed to avert legal and operational exposure.
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Domain Breakdown & Gaps -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header bg-transparent border-bottom p-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h5 class="fw-bold mb-1">Domain Maturity Scores & Identified Gaps</h5>
+            <p class="text-muted small mb-0">Benchmark cutoff is 60/100. Any domain scoring below 60 is flagged as an HR gap.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card-body p-4">
+        <div class="row g-3">
+          {% for cs in audit_result.category_scores %}
+            <div class="col-md-6">
+              <div class="card gap-card p-3 h-100 {% if cs.priority == 'HIGH' %}priority-high{% elif cs.priority == 'MEDIUM' %}priority-medium{% else %}priority-low{% endif %}">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="fw-bold">{{ cs.category }}</span>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="fw-bold">{{ cs.score|floatformat:1 }}</span>
+                    {% if cs.priority == 'HIGH' %}
+                      <span class="badge bg-danger">🔴 HIGH GAP</span>
+                    {% elif cs.priority == 'MEDIUM' %}
+                      <span class="badge bg-warning text-dark">🟠 MEDIUM GAP</span>
+                    {% else %}
+                      <span class="badge bg-success-subtle text-success">🟢 HEALTHY</span>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <!-- Progress bar -->
+                <div class="progress mb-2" style="height: 6px; background-color: var(--card-border);">
+                  <div class="progress-bar {% if cs.score >= 60 %}bg-success{% elif cs.score >= 40 %}bg-warning{% else %}bg-danger{% endif %}" 
+                       role="progressbar" 
+                       style="width: {{ cs.score }}%;" 
+                       aria-valuenow="{{ cs.score }}" 
+                       aria-valuemin="0" 
+                       aria-valuemax="100">
+                  </div>
+                </div>
+
+                <div class="small text-muted mt-1">
+                  {% if cs.gap_description %}
+                    <i class="bi bi-info-circle me-1"></i> {{ cs.gap_description }}
+                  {% else %}
+                    <i class="bi bi-check2 me-1 text-success"></i> Processes are structured and meet target maturity standards.
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Tool Recommendations -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header bg-transparent border-bottom p-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <span class="badge bg-primary-subtle text-primary fw-bold text-uppercase px-2 py-1 mb-1">AI Recommendation Engine</span>
+            <h5 class="fw-bold mb-0">Recommended HR-Tech Software Stack</h5>
+            <p class="text-muted small mb-0">Ranked by team size suitability ({{ startup.team_size|default:35 }} people), monthly budget (₹{{ startup.hr_budget_monthly|default:10000 }}), and gap priority</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body p-4">
+        {% if recommendations %}
+          <div class="row g-4">
+            {% for r in recommendations %}
+              <div class="col-md-4">
+                <div class="card tool-card h-100 p-4">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="fw-bold mb-0">{{ r.tool_name }}</h5>
+                    <span class="badge bg-primary fs-6 fw-bold px-2 py-1">
+                      {{ r.overall_fit|floatformat:0 }}% Fit
+                    </span>
+                  </div>
+
+                  <div class="text-muted small mb-3">
+                    <span class="badge bg-secondary-subtle text-secondary fw-semibold">{{ r.breakdown.gap_match|yesno:"High Gap Fit,Standard" }}</span>
+                  </div>
+
+                  <div class="p-3 bg-body rounded border mb-3">
+                    <div class="small text-muted mb-1">Why Recommended:</div>
+                    <div class="small fw-medium">{{ r.reason }}</div>
+                  </div>
+
+                  <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                    <span class="small text-muted">Budget Feasibility</span>
+                    <span class="badge bg-success-subtle text-success fw-bold">
+                      <i class="bi bi-check-lg me-1"></i> Feasible
+                    </span>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-4 text-muted">
+            <i class="bi bi-emoji-smile fs-2 text-success d-block mb-2"></i>
+            <p class="mb-0">No urgent tooling gaps identified! Your current HR practices meet benchmark standards.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- 4. 3-Month Implementation Roadmap -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header bg-transparent border-bottom p-4">
+        <span class="badge bg-primary-subtle text-primary fw-bold text-uppercase px-2 py-1 mb-1">Phased Execution Plan</span>
+        <h5 class="fw-bold mb-0">3-Month HR Transformation Roadmap</h5>
+        <p class="text-muted small mb-0">A sequenced rollout strategy that addresses your most critical operational and compliance risks first</p>
+      </div>
+
+      <div class="card-body p-4">
+        <div class="ps-2 pt-2">
+          {% for step in roadmap %}
+            <div class="roadmap-step-card">
+              <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                <h6 class="fw-bold mb-0 text-primary">{{ step.month }}: {{ step.focus }}</h6>
+                <span class="badge bg-{{ step.color }}-subtle text-{{ step.color }} fw-semibold">{{ step.tag }}</span>
+              </div>
+              <p class="text-muted small mb-2">{{ step.description }}</p>
+              
+              <div class="card bg-body border-0 p-3">
+                <div class="small fw-bold text-muted mb-2">Key Action Items:</div>
+                <ul class="mb-0 small ps-3">
+                  {% for act in step.actions %}
+                    <li class="mb-1 text-muted">{{ act }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="d-flex justify-content-between align-items-center pt-2 mb-5">
+      <a href="{% url 'dashboard:home' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Return to Dashboard
+      </a>
+      <a href="{% url 'dashboard:audit_pdf' audit_id %}" class="btn btn-primary" target="_blank">
+        <i class="bi bi-download me-1"></i> Download Official PDF Report
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

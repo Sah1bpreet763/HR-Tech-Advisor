@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — HR-Tech Advisor{% endblock %}
+
+{% block content %}
+{% if startup %}
+  <!-- Welcome & Profile Quick Bar -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <span class="badge bg-primary-subtle text-primary fw-bold text-uppercase px-2 py-1">Founder Portal</span>
+        <span class="text-muted small"><i class="bi bi-geo-alt-fill me-1"></i>{{ startup.location|default:"Global" }}</span>
+      </div>
+      <h2 class="fw-bold mb-0">{{ startup.company_name }}</h2>
+      <p class="text-muted small mb-0">Diagnostic hub for team size, HR budget, maturity scoring, and tool recommendations</p>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <a href="{% url 'accounts:profile' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-pencil-square me-1"></i> Edit Profile & Budget
+      </a>
+      <a href="{% url 'dashboard:questionnaire' %}" class="btn btn-primary btn-sm">
+        <i class="bi bi-play-circle-fill me-1"></i> {% if latest_result %}Retake Audit{% else %}Start Audit{% endif %}
+      </a>
+    </div>
+  </div>
+
+  <!-- Key Metrics Row -->
+  <div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+      <div class="card p-3 h-100 border-0 shadow-sm">
+        <div class="d-flex align-items-center gap-3">
+          <div class="brand-icon bg-primary" style="width: 42px; height: 42px; font-size: 1.15rem;">
+            <i class="bi bi-people-fill"></i>
+          </div>
+          <div>
+            <div class="text-muted small">Team Size</div>
+            <div class="fs-5 fw-bold">{{ startup.team_size|default:"—" }} employees</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+      <div class="card p-3 h-100 border-0 shadow-sm">
+        <div class="d-flex align-items-center gap-3">
+          <div class="brand-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); width: 42px; height: 42px; font-size: 1.15rem;">
+            <i class="bi bi-wallet2"></i>
+          </div>
+          <div>
+            <div class="text-muted small">Monthly HR Budget</div>
+            <div class="fs-5 fw-bold">₹{{ startup.hr_budget_monthly|default:"—" }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+      <div class="card p-3 h-100 border-0 shadow-sm">
+        <div class="d-flex align-items-center gap-3">
+          <div class="brand-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); width: 42px; height: 42px; font-size: 1.15rem;">
+            <i class="bi bi-speedometer2"></i>
+          </div>
+          <div>
+            <div class="text-muted small">HR Health Score</div>
+            {% if latest_result %}
+              <div class="fs-5 fw-bold">{{ latest_result.overall_score|floatformat:0 }} / 100</div>
+            {% else %}
+              <div class="fs-5 fw-bold text-muted">Not Audited</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+      <div class="card p-3 h-100 border-0 shadow-sm">
+        <div class="d-flex align-items-center gap-3">
+          <div class="brand-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); width: 42px; height: 42px; font-size: 1.15rem;">
+            <i class="bi bi-rocket-takeoff"></i>
+          </div>
+          <div>
+            <div class="text-muted small">Stage & Industry</div>
+            <div class="fs-6 fw-bold text-truncate" style="max-width: 140px;">
+              {{ startup.industry|default:"SaaS" }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Latest Audit Result or Hero CTA Banner -->
+  {% if latest_result %}
+    <div class="card shadow-sm border-0 mb-4 p-4" style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%); border: 1px solid var(--card-border) !important;">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="badge bg-success-subtle text-success fw-bold">Active Diagnostic</span>
+            <span class="text-muted small">Latest completed audit #{{ latest_result.audit_id }}</span>
+          </div>
+          <h3 class="fw-bold mb-2">Overall HR Health: {{ latest_result.overall_score|floatformat:0 }}/100 ({{ latest_result.status }})</h3>
+          <p class="text-muted small mb-3">
+            Your customized diagnostic report has identified specific high-impact operational gaps and matched them with software tools tailored for your {{ startup.team_size|default:35 }}-person team and ₹{{ startup.hr_budget_monthly|default:10000 }}/mo budget.
+          </p>
+          <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'dashboard:audit_results' latest_result.audit_id %}" class="btn btn-primary">
+              <i class="bi bi-bar-chart-fill me-1"></i> View Full Health Score & Gaps
+            </a>
+            <a href="{% url 'dashboard:audit_pdf' latest_result.audit_id %}" class="btn btn-outline-primary" target="_blank">
+              <i class="bi bi-file-earmark-pdf-fill me-1 text-danger"></i> Download PDF Report
+            </a>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="card border p-3 bg-body shadow-sm">
+            <div class="fw-bold small mb-2 text-muted text-uppercase">HR Domain Breakdown</div>
+            {% for cs in latest_result.category_scores|slice:":4" %}
+              <div class="mb-2">
+                <div class="d-flex justify-content-between small mb-1">
+                  <span>{{ cs.category }}</span>
+                  <span class="fw-bold">{{ cs.score|floatformat:0 }}/100</span>
+                </div>
+                <div class="progress" style="height: 4px; background-color: var(--card-border);">
+                  <div class="progress-bar {% if cs.score >= 60 %}bg-success{% elif cs.score >= 40 %}bg-warning{% else %}bg-danger{% endif %}" style="width: {{ cs.score }}%;"></div>
+                </div>
+              </div>
+            {% endfor %}
+            <div class="text-end mt-1">
+              <a href="{% url 'dashboard:audit_results' latest_result.audit_id %}" class="small text-decoration-none fw-semibold" style="color: var(--primary-color);">
+                View all 6 domains &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="card shadow-sm border-0 mb-4 p-4 p-md-5 text-center" style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.06) 0%, rgba(124, 58, 237, 0.06) 100%);">
+      <div class="brand-icon mx-auto mb-3" style="width: 56px; height: 56px; font-size: 1.75rem;">
+        <i class="bi bi-clipboard2-check-fill"></i>
+      </div>
+      <h2 class="fw-bold mb-2">Take Your 5-Minute Digital HR Audit</h2>
+      <p class="text-muted mx-auto mb-4" style="max-width: 580px;">
+        Answer ~20–30 structured questions to assess your HR maturity, identify operational bottlenecks, receive ranked tool recommendations, and generate a 3-month implementation roadmap.
+      </p>
+      <div>
+        <a href="{% url 'dashboard:questionnaire' %}" class="btn btn-primary px-4 py-2 fs-6 fw-bold">
+          <i class="bi bi-play-circle me-1"></i> Start Digital HR Audit Now
+        </a>
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Past Audits Section -->
+  {% if audit_history %}
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-transparent border-bottom p-4 d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0">Past Diagnostic Runs</h5>
+        <a href="{% url 'dashboard:audit_history' %}" class="btn btn-sm btn-outline-secondary">View All</a>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table align-middle table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th class="ps-4">Audit ID</th>
+                <th>Date</th>
+                <th>Score</th>
+                <th>Status</th>
+                <th class="text-end pe-4">Report</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in audit_history|slice:":3" %}
+                <tr>
+                  <td class="ps-4 fw-semibold">#{{ item.audit_id }}</td>
+                  <td>{{ item.completed_at|default:item.created_at|slice:":10" }}</td>
+                  <td>
+                    {% if item.overall_score is not None %}
+                      <span class="fw-bold">{{ item.overall_score|floatformat:1 }}</span> / 100
+                    {% else %}
+                      —
+                    {% endif %}
+                  </td>
+                  <td>
+                    <span class="badge bg-success-subtle text-success text-uppercase">{{ item.status }}</span>
+                  </td>
+                  <td class="text-end pe-4">
+                    <a href="{% url 'dashboard:audit_results' item.audit_id %}" class="btn btn-sm btn-outline-primary me-1">
+                      View Results
+                    </a>
+                    <a href="{% url 'dashboard:audit_pdf' item.audit_id %}" class="btn btn-sm btn-outline-secondary" target="_blank">
+                      <i class="bi bi-file-pdf"></i>
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+{% else %}
+  <div class="alert alert-warning">Could not load your profile. Please check if the backend service is running.</div>
+{% endif %}
+{% endblock %}
+
