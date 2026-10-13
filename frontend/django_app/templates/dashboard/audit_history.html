@@ -4,9 +4,14 @@
 <div class="row justify-content-center">
   <div class="col-lg-10">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h2 class="fw-bold mb-1">HR Audit History</h2>
-        <p class="text-muted small mb-0">Track your HR maturity diagnostics and score progression over time</p>
+      <div class="d-flex align-items-center gap-3">
+        <a href="{% url 'dashboard:home' %}" class="page-back-btn" title="Back to Dashboard" aria-label="Back to Dashboard">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+          <h2 class="fw-bold mb-1">HR Audit History</h2>
+          <p class="text-muted small mb-0">Track your HR maturity diagnostics and score progression over time</p>
+        </div>
       </div>
       <a href="{% url 'dashboard:questionnaire' %}" class="btn btn-primary btn-sm">
         <i class="bi bi-plus-circle me-1"></i> Start New Audit

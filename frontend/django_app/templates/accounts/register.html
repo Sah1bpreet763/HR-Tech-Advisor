@@ -43,7 +43,12 @@
 
             <div class="col-md-6">
               <label class="form-label small fw-semibold">Password <span class="text-danger">*</span></label>
-              {{ form.password }}
+              <div class="input-group">
+                {{ form.password }}
+                <button class="btn btn-outline-secondary toggle-password-btn" type="button" tabindex="-1" title="Toggle password visibility">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
               {% if form.password.help_text %}
                 <div class="form-text small">{{ form.password.help_text }}</div>
               {% endif %}
@@ -54,7 +59,12 @@
 
             <div class="col-md-6">
               <label class="form-label small fw-semibold">Confirm Password <span class="text-danger">*</span></label>
-              {{ form.confirm_password }}
+              <div class="input-group">
+                {{ form.confirm_password }}
+                <button class="btn btn-outline-secondary toggle-password-btn" type="button" tabindex="-1" title="Toggle password visibility">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
               {% if form.confirm_password.errors %}
                 <div class="text-danger small mt-1">{{ form.confirm_password.errors|striptags }}</div>
               {% endif %}

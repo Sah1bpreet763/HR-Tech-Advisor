@@ -37,7 +37,12 @@
                 Forgot password?
               </a>
             </div>
-            {{ form.password }}
+            <div class="input-group">
+              {{ form.password }}
+              <button class="btn btn-outline-secondary toggle-password-btn" type="button" tabindex="-1" title="Toggle password visibility">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
             {% if form.password.errors %}
               <div class="text-danger small mt-1">{{ form.password.errors|striptags }}</div>
             {% endif %}

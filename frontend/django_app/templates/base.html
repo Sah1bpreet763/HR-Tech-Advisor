@@ -89,39 +89,149 @@
     }
 
     .brand-logo {
-      font-weight: 800;
+      font-weight: 700;
       letter-spacing: -0.02em;
-      font-size: 1.25rem;
-      background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 1.15rem;
+      color: #ffffff !important;
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
+      text-decoration: none;
     }
 
     .brand-icon {
-      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-      color: white;
+      background-color: var(--primary-color);
+      color: #ffffff;
       width: 32px;
       height: 32px;
       border-radius: 8px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
-      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.35);
-      -webkit-text-fill-color: white;
+      font-size: 0.95rem;
+      box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
+    }
+
+    .back-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      color: #f8fafc;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.85rem;
+      transition: all 0.15s ease;
+    }
+    .back-nav-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      transform: translateX(-1px);
+    }
+
+    .page-back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--card-border);
+      background-color: var(--card-bg);
+      color: var(--text-main);
+      text-decoration: none;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    .page-back-btn:hover {
+      background-color: var(--badge-bg);
+      color: var(--primary-color);
+      border-color: var(--primary-color);
+      transform: translateX(-2px);
+    }
+
+    /* Form inputs with refined SaaS aesthetics */
+    .form-label {
+      font-size: 0.835rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.01em;
+    }
+
+    .form-control, .form-select {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 0.85rem;
+      font-size: 0.915rem;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14);
+      background-color: var(--card-bg);
+      color: var(--text-main);
+    }
+    .form-control::placeholder {
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+
+    /* Seamless Input Group for Eye Toggle */
+    .input-group {
+      border-radius: var(--radius-sm);
+      transition: box-shadow 0.15s ease;
+    }
+    .input-group .form-control {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-right: none;
+    }
+    .input-group .toggle-password-btn {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border: 1px solid var(--card-border);
+      border-left: none;
+      background-color: var(--card-bg);
+      color: var(--text-muted);
+      padding: 0.6rem 0.85rem;
+      transition: all 0.15s ease;
+    }
+    .input-group .toggle-password-btn:hover {
+      background-color: var(--badge-bg);
+      color: var(--text-main);
+      border-color: var(--card-border);
+    }
+    .input-group:focus-within {
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14);
+    }
+    .input-group:focus-within .form-control {
+      border-color: var(--primary-color);
+      box-shadow: none;
+    }
+    .input-group:focus-within .toggle-password-btn {
+      border-color: var(--primary-color);
     }
 
     .nav-link {
       font-weight: 500;
-      font-size: 0.925rem;
+      font-size: 0.9rem;
       color: #94a3b8 !important;
-      transition: color 0.2s ease;
+      padding: 0.45rem 0.8rem !important;
+      border-radius: 6px;
+      transition: all 0.15s ease;
     }
-    .nav-link:hover, .nav-link.active {
+    .nav-link:hover {
       color: #ffffff !important;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .nav-link.active {
+      color: #ffffff !important;
+      background: rgba(255, 255, 255, 0.12);
     }
 
     /* Card styling */
@@ -132,7 +242,6 @@
       box-shadow: var(--shadow-sm);
       transition: all 0.2s ease;
     }
-
     .card:hover {
       box-shadow: var(--shadow-md);
     }
@@ -141,16 +250,32 @@
     .btn-primary {
       background-color: var(--primary-color);
       border-color: var(--primary-color);
+      color: #ffffff;
       font-weight: 600;
       padding: 0.55rem 1.25rem;
       border-radius: var(--radius-sm);
       transition: all 0.15s ease;
+      box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
     }
-    .btn-primary:hover {
+    .btn-primary:hover, .btn-primary:focus {
       background-color: var(--primary-hover);
       border-color: var(--primary-hover);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+      color: #ffffff;
+      box-shadow: 0 2px 4px 0 rgba(79, 70, 229, 0.25);
+    }
+
+    .btn-outline-secondary {
+      border-color: var(--card-border);
+      color: var(--text-muted);
+      background-color: transparent;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+    .btn-outline-secondary:hover {
+      background-color: var(--badge-bg);
+      border-color: var(--card-border);
+      color: var(--text-main);
     }
 
     .btn-theme-toggle {
@@ -209,10 +334,17 @@
   <!-- Navigation Header -->
   <nav class="navbar navbar-expand-lg app-navbar navbar-dark sticky-top">
     <div class="container">
-      <a class="navbar-brand brand-logo" href="{% if request.session.user_id %}{% url 'dashboard:home' %}{% else %}{% url 'accounts:login' %}{% endif %}">
-        <span class="brand-icon"><i class="bi bi-cpu-fill"></i></span>
-        <span>HR-Tech Advisor</span>
-      </a>
+      <div class="d-flex align-items-center">
+        {% if request.session.user_id %}
+          <button type="button" class="btn back-nav-btn me-2" onclick="handleSmartBack()" title="Back to previous page" aria-label="Go Back">
+            <i class="bi bi-arrow-left"></i> <span class="d-none d-sm-inline ms-1">Back</span>
+          </button>
+        {% endif %}
+        <a class="navbar-brand brand-logo" href="{% if request.session.user_id %}{% url 'dashboard:home' %}{% else %}{% url 'accounts:login' %}{% endif %}">
+          <span class="brand-icon"><i class="bi bi-cpu-fill"></i></span>
+          <span>HR-Tech Advisor</span>
+        </a>
+      </div>
 
       <button class="navbar-toggler" type="button" data-bs-display="static" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -327,6 +459,32 @@
         localStorage.setItem('hr_advisor_theme', nextTheme);
         updateThemeIcon(nextTheme);
       });
+    }
+
+    // Universal Password Visibility Toggle
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('.toggle-password-btn');
+      if (!btn) return;
+      e.preventDefault();
+      const inputGroup = btn.closest('.input-group');
+      if (!inputGroup) return;
+      const input = inputGroup.querySelector('input');
+      if (!input) return;
+      const isPassword = input.getAttribute('type') === 'password';
+      input.setAttribute('type', isPassword ? 'text' : 'password');
+      const icon = btn.querySelector('i');
+      if (icon) {
+        icon.className = isPassword ? 'bi bi-eye-slash' : 'bi bi-eye';
+      }
+    });
+
+    // Smart Back Navigation Helper
+    function handleSmartBack() {
+      if (window.history.length > 1 && document.referrer && document.referrer.includes(window.location.host)) {
+        window.history.back();
+      } else {
+        window.location.href = "{% url 'dashboard:home' %}";
+      }
     }
   </script>
   {% block extra_js %}{% endblock %}

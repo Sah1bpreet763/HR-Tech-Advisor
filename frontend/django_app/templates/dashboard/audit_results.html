@@ -4,10 +4,11 @@
 {% block extra_css %}
 <style>
   .score-gauge-box {
-    background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(124, 58, 237, 0.08) 100%);
+    background-color: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: var(--radius-lg);
     padding: 2rem;
+    box-shadow: var(--shadow-sm);
   }
 
   .score-number {
@@ -42,7 +43,7 @@
   }
   .tool-card:hover {
     box-shadow: var(--shadow-md);
-    border-color: #a5b4fc;
+    border-color: var(--primary-color);
   }
 
   .roadmap-step-card {
@@ -71,18 +72,23 @@
     
     <!-- Top Action Bar -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-      <div>
-        <div class="d-flex align-items-center gap-2 mb-1">
-          <span class="badge bg-success-subtle text-success fw-bold px-2 py-1">
-            <i class="bi bi-patch-check-fill me-1"></i> Audit Completed
-          </span>
-          <span class="text-muted small">Diagnostic ID #{{ audit_id }}</span>
-        </div>
-        <h2 class="fw-bold mb-0">{{ startup.company_name }} — HR Health Diagnostic</h2>
-        <div class="text-muted small mt-1">
-          <span><i class="bi bi-people me-1"></i> {{ startup.team_size|default:"—" }} employees</span> &bull; 
-          <span><i class="bi bi-wallet2 me-1"></i> ₹{{ startup.hr_budget_monthly|default:"—" }}/month budget</span> &bull;
-          <span><i class="bi bi-briefcase me-1"></i> {{ startup.industry|default:"Startup" }}</span>
+      <div class="d-flex align-items-start gap-3">
+        <a href="{% url 'dashboard:home' %}" class="page-back-btn mt-1" title="Back to Dashboard" aria-label="Back to Dashboard">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <span class="badge bg-success-subtle text-success fw-bold px-2 py-1">
+              <i class="bi bi-patch-check-fill me-1"></i> Audit Completed
+            </span>
+            <span class="text-muted small">Diagnostic ID #{{ audit_id }}</span>
+          </div>
+          <h2 class="fw-bold mb-0">{{ startup.company_name }} — HR Health Diagnostic</h2>
+          <div class="text-muted small mt-1">
+            <span><i class="bi bi-people me-1"></i> {{ startup.team_size|default:"—" }} employees</span> &bull; 
+            <span><i class="bi bi-wallet2 me-1"></i> ₹{{ startup.hr_budget_monthly|default:"—" }}/month budget</span> &bull;
+            <span><i class="bi bi-briefcase me-1"></i> {{ startup.industry|default:"Startup" }}</span>
+          </div>
         </div>
       </div>
 

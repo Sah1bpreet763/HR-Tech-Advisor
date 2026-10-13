@@ -1,5 +1,5 @@
 """
-MODULE 2 — Password hashing helpers.
+MODULE 2 — Password hashing helpers & Email Authentication Service.
 
 Uses Python's built-in hashlib (PBKDF2-HMAC-SHA256) so no extra native
 dependency (like bcrypt) is required for the MVP. Good enough for a
@@ -8,7 +8,20 @@ bcrypt or argon2 via passlib.
 """
 import hashlib
 import hmac
+import logging
 import os
+import secrets
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Ensure .env is loaded from root directory
+env_path = Path(__file__).resolve().parent.parent.parent / ".env"
+load_dotenv(dotenv_path=env_path, override=True)
+
+logger = logging.getLogger("auth_service")
 
 PBKDF2_ITERATIONS = 100_000
 
@@ -27,21 +40,6 @@ def verify_password(password: str, stored: str) -> bool:
     salt = bytes.fromhex(salt_hex)
     dk = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, PBKDF2_ITERATIONS)
     return hmac.compare_digest(dk.hex(), hash_hex)
-
-
-import secrets
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-import logging
-from pathlib import Path
-from dotenv import load_dotenv
-
-# Ensure .env is loaded from root directory
-env_path = Path(__file__).resolve().parent.parent.parent / ".env"
-load_dotenv(dotenv_path=env_path, override=True)
-
-logger = logging.getLogger("auth_service")
 
 
 def generate_reset_token() -> str:

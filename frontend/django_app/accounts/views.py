@@ -111,7 +111,7 @@ def forgot_password_view(request):
             else:
                 if resp.status_code == 200:
                     reset_info = resp.json()
-                    messages.success(request, reset_info["message"])
+                    messages.success(request, f"Password reset instructions have been processed for {email}.")
                 else:
                     form.add_error(None, "Unable to process password reset request.")
     else:

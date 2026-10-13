@@ -1,9 +1,11 @@
 """MODULE 10 API — Digital HR Health Report data (PDF generation comes later)."""
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
 from database.database import get_db
 from database import models
+from backend.services.report_generator import generate_audit_pdf
 
 router = APIRouter()
 
@@ -35,10 +37,6 @@ def get_report_data(audit_id: int, db: Session = Depends(get_db)):
             for rec in audit.recommendations
         ],
     }
-
-
-from fastapi.responses import Response
-from backend.services.report_generator import generate_audit_pdf
 
 
 @router.get("/{audit_id}/pdf")

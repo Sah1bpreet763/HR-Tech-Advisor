@@ -33,6 +33,19 @@ class AccountsFrontendTests(TestCase):
         }
         resp = self.client.post(reverse("accounts:forgot_password"), {"email": "test@startup.io"})
         self.assertEqual(resp.status_code, 200)
-        self.assertContains(resp, "Local Dev & Testing Preview")
+        self.assertContains(resp, "Reset Instructions Sent")
         self.assertContains(resp, "token=abc123xyz")
+
+    @patch("requests.post")
+    def test_forgot_password_email_sent_alert(self, mock_post):
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = {
+            "message": "Instructions sent",
+            "reset_url": None,
+            "email_sent": True,
+            "status_detail": "Password reset instructions have been sent.",
+        }
+        resp = self.client.post(reverse("accounts:forgot_password"), {"email": "test@startup.io"})
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "Reset Instructions Sent")
 

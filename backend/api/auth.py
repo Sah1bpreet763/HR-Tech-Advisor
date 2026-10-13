@@ -98,12 +98,13 @@ def forgot_password(payload: ForgotPasswordRequest, db: Session = Depends(get_db
     db.commit()
 
     reset_url = f"http://127.0.0.1:8080/accounts/reset-password/?token={token}"
-    email_sent = send_password_reset_email(user.email, reset_url)
+    email_sent, status_detail = send_password_reset_email(user.email, reset_url)
 
     return ForgotPasswordResponse(
         message="If an account with that email exists, we have sent instructions to reset your password.",
         reset_url=reset_url if not email_sent else None,
         email_sent=email_sent,
+        status_detail=status_detail,
     )
 
 

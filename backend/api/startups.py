@@ -1,5 +1,7 @@
 """Read a startup's profile (used by the Django dashboard)."""
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from database.database import get_db
@@ -23,10 +25,6 @@ def get_startup(startup_id: int, db: Session = Depends(get_db)):
         "location": startup.location,
         "contact_email": startup.contact_email,
     }
-
-
-from pydantic import BaseModel
-from typing import Optional
 
 
 class StartupUpdatePayload(BaseModel):

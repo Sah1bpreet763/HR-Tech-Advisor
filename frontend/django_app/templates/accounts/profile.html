@@ -4,12 +4,17 @@
 <div class="row justify-content-center">
   <div class="col-lg-8">
     <div class="d-flex align-items-center justify-content-between mb-4">
-      <div>
-        <h2 class="fw-bold mb-1">Company Profile & Diagnostic Settings</h2>
-        <p class="text-muted small mb-0">Manage parameters used to calculate tool fit scores and budget feasibility</p>
+      <div class="d-flex align-items-center gap-3">
+        <a href="{% url 'dashboard:home' %}" class="page-back-btn" title="Back to Dashboard" aria-label="Back to Dashboard">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+          <h2 class="fw-bold mb-1">Company Profile & Diagnostic Settings</h2>
+          <p class="text-muted small mb-0">Manage parameters used to calculate tool fit scores and budget feasibility</p>
+        </div>
       </div>
       <a href="{% url 'dashboard:home' %}" class="btn btn-outline-secondary btn-sm">
-        <i class="bi bi-arrow-left me-1"></i> Dashboard
+        <i class="bi bi-grid-1x2 me-1"></i> Dashboard
       </a>
     </div>
 

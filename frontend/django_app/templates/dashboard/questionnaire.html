@@ -83,7 +83,7 @@
     background-color: var(--card-bg);
   }
   .option-card:hover {
-    border-color: #a5b4fc;
+    border-color: var(--primary-color);
     transform: translateX(2px);
   }
   .option-card input[type="radio"] {
@@ -143,9 +143,14 @@
     <!-- Questionnaire Header & Progress Tracker -->
     <div class="progress-fixed-header shadow-sm mb-4">
       <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-2">
-        <div>
-          <span class="badge bg-primary-subtle text-primary fw-bold text-uppercase px-2 py-1 mb-1">Module 3 Diagnostic</span>
-          <h4 class="fw-bold mb-0">Digital HR Maturity Audit</h4>
+        <div class="d-flex align-items-center gap-3">
+          <a href="{% url 'dashboard:home' %}" class="page-back-btn" title="Back to Dashboard" aria-label="Back to Dashboard">
+            <i class="bi bi-arrow-left"></i>
+          </a>
+          <div>
+            <span class="badge bg-primary-subtle text-primary fw-bold text-uppercase px-2 py-1 mb-1">Module 3 Diagnostic</span>
+            <h4 class="fw-bold mb-0">Digital HR Maturity Audit</h4>
+          </div>
         </div>
         <div class="text-sm-end">
           <div class="fw-bold small text-muted">

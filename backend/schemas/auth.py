@@ -34,6 +34,7 @@ class ForgotPasswordResponse(BaseModel):
     message: str
     reset_url: Optional[str] = None  # Provided in dev/testing mode if SMTP is not configured
     email_sent: bool
+    status_detail: Optional[str] = None
 
 
 class VerifyTokenResponse(BaseModel):
