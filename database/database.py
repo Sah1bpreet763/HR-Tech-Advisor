@@ -13,6 +13,13 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./database/hr_advisor.db")
 
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace(
+        "postgresql://",
+        "postgresql+psycopg://",
+        1
+    )
+
 # check_same_thread=False is required for SQLite when used with FastAPI,
 # since FastAPI can handle a request in a different thread than it was created in.
 engine = create_engine(
