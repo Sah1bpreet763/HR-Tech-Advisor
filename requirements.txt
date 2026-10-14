@@ -25,3 +25,7 @@ requests==2.32.3
 # --- Testing ---
 pytest==8.3.4
 httpx==0.28.1
+
+# ---Django Production Deployment ---
+gunicorn==23.0.0
+whitenoise==6.9.0
