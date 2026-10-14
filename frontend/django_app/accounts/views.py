@@ -164,6 +164,12 @@ def login_view(request):
                     "The login service returned unexpected data. "
                     "Please try again later.",
                 )
+            except Exception:
+                logger.exception("Unexpected error in login_view")
+                form.add_error(
+                    None,
+                    "An unexpected error occurred. Please try again.",
+                )
 
     else:
         form = LoginForm()
