@@ -1,4 +1,6 @@
 import requests
+import logging
+
 from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, redirect
@@ -7,14 +9,20 @@ from .forms import RegisterForm, LoginForm, ForgotPasswordForm, ResetPasswordFor
 from dashboard.decorators import session_login_required
 
 
+logger = logging.getLogger(__name__)
+
+
+
 def register_view(request):
     if request.session.get("user_id"):
         return redirect("dashboard:home")
 
     if request.method == "POST":
         form = RegisterForm(request.POST)
+
         if form.is_valid():
             data = form.cleaned_data
+
             payload = {
                 "email": data["email"],
                 "password": data["password"],
@@ -25,28 +33,76 @@ def register_view(request):
                 "hr_budget_monthly": data.get("hr_budget_monthly"),
                 "location": data.get("location") or None,
             }
+
             try:
                 resp = requests.post(
-                    f"{settings.FASTAPI_BASE_URL}/api/auth/register",
-                    json=payload, timeout=5,
+                    f"{settings.FASTAPI_BASE_URL.rstrip('/')}/api/auth/register",
+                    json=payload,
+                    timeout=20,
                 )
-            except requests.RequestException:
-                form.add_error(None, "Could not reach the HR-Tech Advisor backend. Is it running?")
-            else:
-                if resp.status_code == 200:
+
+                try:
                     result = resp.json()
-                    request.session["user_id"] = result["user_id"]
-                    request.session["startup_id"] = result["startup_id"]
-                    request.session["company_name"] = result["company_name"]
-                    messages.success(request, f"Welcome, {result['company_name']}! Your account is ready.")
-                    return redirect("dashboard:home")
+                except ValueError:
+                    logger.error(
+                        "Registration API returned non-JSON response. "
+                        "Status code: %s",
+                        resp.status_code,
+                    )
+                    form.add_error(
+                        None,
+                        "The registration service returned an unexpected response. "
+                        "Please try again later.",
+                    )
                 else:
-                    detail = resp.json().get("detail", "Registration failed.")
-                    form.add_error(None, detail)
+                    if resp.status_code == 200:
+                        request.session["user_id"] = result["user_id"]
+                        request.session["startup_id"] = result["startup_id"]
+                        request.session["company_name"] = result["company_name"]
+
+                        messages.success(
+                            request,
+                            f"Welcome, {result['company_name']}! "
+                            "Your account is ready.",
+                        )
+                        return redirect("dashboard:home")
+
+                    detail = result.get(
+                        "detail",
+                        "Registration failed. Please check your details.",
+                    )
+
+                    if isinstance(detail, (dict, list)):
+                        detail = "Registration failed. Please check your details."
+
+                    form.add_error(None, str(detail))
+
+            except requests.RequestException:
+                logger.exception("FastAPI registration request failed")
+                form.add_error(
+                    None,
+                    "Could not reach the registration service. "
+                    "Please try again later.",
+                )
+
+            except (KeyError, TypeError):
+                logger.exception(
+                    "Unexpected registration API response structure"
+                )
+                form.add_error(
+                    None,
+                    "The registration service returned unexpected data. "
+                    "Please try again later.",
+                )
+
     else:
         form = RegisterForm()
 
-    return render(request, "accounts/register.html", {"form": form})
+    return render(
+        request,
+        "accounts/register.html",
+        {"form": form},
+    )
 
 
 def login_view(request):
