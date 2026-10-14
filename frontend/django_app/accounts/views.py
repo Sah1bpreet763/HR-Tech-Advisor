@@ -105,31 +105,66 @@ def register_view(request):
     )
 
 
+
 def login_view(request):
     if request.session.get("user_id"):
         return redirect("dashboard:home")
 
     if request.method == "POST":
         form = LoginForm(request.POST)
+
         if form.is_valid():
             data = form.cleaned_data
+
             try:
                 resp = requests.post(
-                    f"{settings.FASTAPI_BASE_URL}/api/auth/login",
-                    json={"email": data["email"], "password": data["password"]},
-                    timeout=5,
+                    f"{settings.FASTAPI_BASE_URL.rstrip('/')}/api/auth/login",
+                    json={
+                        "email": data["email"],
+                        "password": data["password"],
+                    },
+                    timeout=20,
                 )
-            except requests.RequestException:
-                form.add_error(None, "Could not reach the HR-Tech Advisor backend. Is it running?")
-            else:
-                if resp.status_code == 200:
+
+                try:
                     result = resp.json()
-                    request.session["user_id"] = result["user_id"]
-                    request.session["startup_id"] = result["startup_id"]
-                    request.session["company_name"] = result["company_name"]
-                    return redirect("dashboard:home")
+                except ValueError:
+                    logger.error(
+                        "Login API returned non-JSON response. Status: %s",
+                        resp.status_code,
+                    )
+                    form.add_error(
+                        None,
+                        "The login service returned an unexpected response. "
+                        "Please try again later.",
+                    )
                 else:
+                    if resp.status_code == 200:
+                        request.session["user_id"] = result["user_id"]
+                        request.session["startup_id"] = result["startup_id"]
+                        request.session["company_name"] = result["company_name"]
+
+                        return redirect("dashboard:home")
+
                     form.add_error(None, "Invalid email or password.")
+
+            except requests.RequestException:
+                logger.exception("FastAPI login request failed")
+                form.add_error(
+                    None,
+                    "Could not reach the login service. Please try again later.",
+                )
+
+            except (KeyError, TypeError):
+                logger.exception(
+                    "Unexpected login API response structure"
+                )
+                form.add_error(
+                    None,
+                    "The login service returned unexpected data. "
+                    "Please try again later.",
+                )
+
     else:
         form = LoginForm()
 
