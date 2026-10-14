@@ -133,6 +133,7 @@ def login_view(request):
                         "Login API returned non-JSON response. Status: %s",
                         resp.status_code,
                     )
+                    logger.error("Login API response body: %s", resp.text[:1000])
                     form.add_error(
                         None,
                         "The login service returned an unexpected response. "
