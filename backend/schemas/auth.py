@@ -32,9 +32,6 @@ class ForgotPasswordRequest(BaseModel):
 
 class ForgotPasswordResponse(BaseModel):
     message: str
-    reset_url: Optional[str] = None  # Provided in dev/testing mode if SMTP is not configured
-    email_sent: bool
-    status_detail: Optional[str] = None
 
 
 class VerifyTokenResponse(BaseModel):
@@ -43,7 +40,36 @@ class VerifyTokenResponse(BaseModel):
     detail: Optional[str] = None
 
 
+class VerifyOTPRequest(BaseModel):
+    email: EmailStr
+    otp_code: str
+    purpose: Optional[str] = "reset_password"
+
+
+class VerifyOTPResponse(BaseModel):
+    valid: bool
+    email: Optional[str] = None
+    token: Optional[str] = None
+    detail: Optional[str] = None
+
+
 class ResetPasswordRequest(BaseModel):
-    token: str
+    token: Optional[str] = None
+    email: Optional[EmailStr] = None
+    otp_code: Optional[str] = None
     new_password: str
 
+
+class ResetPasswordOTPRequest(BaseModel):
+    email: EmailStr
+    otp_code: str
+    new_password: str
+
+
+class SendLoginOTPRequest(BaseModel):
+    email: EmailStr
+
+
+class VerifyLoginOTPRequest(BaseModel):
+    email: EmailStr
+    otp_code: str

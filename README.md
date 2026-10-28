@@ -29,8 +29,6 @@ You need **two servers running at once**, in two terminals:
 ```
 cd HR-Tech-Advisor
 source venv/bin/activate
-python -m database.init_db      # first time only, seeds the HR framework
-uvicorn backend.main:app --reload
 ```
 
 **Terminal 2 — Django frontend (port 8080):**
@@ -42,6 +40,18 @@ python manage.py runserver 8080
 ```
 
 Then open **http://127.0.0.1:8080/** in a browser.
+
+### Configure Gmail OTP delivery
+
+Copy `.env.example` to `.env` in the repository root and set `SMTP_USER` to
+your Gmail address and `SMTP_PASSWORD` to a Google App Password (not your
+regular Gmail password). Enable 2-Step Verification on the Google account
+before creating an App Password. Keep `.env` private and never commit it.
+
+The backend uses `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=587`, and
+`SMTP_TLS=True` for Gmail. Set `FROM_EMAIL` to the same Gmail address.
+Restart the FastAPI backend after changing these settings. Login and password
+reset OTPs are sent by email; they are not displayed in the application.
 
 ## How to check Module 2 (Registration & Auth) is working
 
@@ -77,7 +87,7 @@ JSON responses.
 - **Module 1 — HR Audit Framework**: 6 foundational categories (Recruitment, Payroll, Attendance, Performance Management, Employee Engagement, HR Analytics), 30 questions, weights, and gap thresholds.
 - **Module 2 — Startup Registration, Authentication & Profile**:
   - Full registration & login flow (`/accounts/register/`, `/accounts/login/`, `/accounts/logout/`).
-  - Secure **Forgot Password & Password Reset** with token expiration, database tracking, SMTP email delivery support, and local dev fallback (`/accounts/forgot-password/`, `/accounts/reset-password/`).
+  - Secure **Forgot Password & Password Reset** with expiring, single-use OTPs sent by SMTP email (`/accounts/forgot-password/`, `/accounts/reset-password/`).
   - Startup Profile Settings (`/accounts/profile/`) to update headcount, monthly HR budget, and company details.
 - **Module 3 — Interactive HR Audit Questionnaire**:
   - 6-domain stepper with category icons, live progress bar (`/dashboard/audit/`), and responsive option cards.
@@ -105,4 +115,3 @@ Run frontend Django tests:
 cd frontend/django_app
 ..\..\venv\Scripts\python.exe manage.py test
 ```
-

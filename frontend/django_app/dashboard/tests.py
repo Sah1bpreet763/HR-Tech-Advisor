@@ -7,6 +7,19 @@ class DashboardFrontendTests(TestCase):
     def setUp(self):
         self.client = Client()
 
+    def test_landing_page_shows_hr_features_only(self):
+        resp = self.client.get(reverse("landing"))
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "HR Audits &amp; Maturity Scoring")
+        self.assertContains(resp, "Performance &amp; Engagement")
+        self.assertContains(resp, "HR Tool Recommendations")
+        self.assertNotContains(resp, "Product Design")
+        self.assertNotContains(resp, "UX/UI Design")
+        self.assertNotContains(resp, "Education")
+        for module_number in range(1, 4):
+            self.assertNotContains(resp, f"Module {module_number}")
+
     def test_unauthenticated_dashboard_redirects_to_login(self):
         resp = self.client.get(reverse("dashboard:home"))
         self.assertEqual(resp.status_code, 302)
@@ -49,6 +62,10 @@ class DashboardFrontendTests(TestCase):
         self.assertContains(resp, "TestCorp")
         self.assertContains(resp, "35 employees")
         self.assertContains(resp, "₹10000.0")
+        self.assertContains(resp, "Attendance Management")
+        self.assertContains(resp, "Performance Management")
+        self.assertNotContains(resp, "Attendance Automation")
+        self.assertNotContains(resp, "Performance &amp; OKRs")
 
     @patch("requests.get")
     def test_authenticated_questionnaire_renders(self, mock_get):
@@ -77,4 +94,4 @@ class DashboardFrontendTests(TestCase):
         self.assertContains(resp, "Digital HR Maturity Audit")
         self.assertContains(resp, "How do you track attendance?")
         self.assertContains(resp, "Biometric System")
-
+        self.assertNotContains(resp, "Module 3")

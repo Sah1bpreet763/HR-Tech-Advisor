@@ -54,18 +54,33 @@ class BootstrapFormMixin:
 
 
 class RegisterForm(BootstrapFormMixin, forms.Form):
-    company_name = forms.CharField(max_length=200, label="Company name")
-    email = forms.EmailField(label="Work email")
+    company_name = forms.CharField(
+        max_length=200,
+        label="Company name",
+        widget=forms.TextInput(attrs={"placeholder": "e.g. Acme Technologies"}),
+    )
+    email = forms.EmailField(
+        label="Work email",
+        widget=forms.EmailInput(attrs={"placeholder": "founder@acme.com"}),
+    )
     password = forms.CharField(
-        widget=forms.PasswordInput,
+        widget=forms.PasswordInput(attrs={"placeholder": "••••••••"}),
         validators=[password_validator],
         help_text=PASSWORD_HELP_TEXT,
         label="Password",
     )
-    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm password")
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "••••••••"}),
+        label="Confirm password",
+    )
 
     industry = forms.ChoiceField(choices=INDUSTRY_CHOICES, required=False)
-    team_size = forms.IntegerField(required=False, min_value=1, label="Team size")
+    team_size = forms.IntegerField(
+        required=False,
+        min_value=1,
+        label="Team size",
+        widget=forms.NumberInput(attrs={"placeholder": "e.g. 35", "class": "no-spinner"}),
+    )
     growth_stage = forms.ChoiceField(choices=GROWTH_STAGE_CHOICES, required=False)
     hr_budget_monthly = forms.FloatField(
         required=False,
@@ -78,7 +93,11 @@ class RegisterForm(BootstrapFormMixin, forms.Form):
             "step": "any",
         }),
     )
-    location = forms.CharField(max_length=100, required=False)
+    location = forms.CharField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "e.g. Bengaluru, India"}),
+    )
 
     def clean(self):
         cleaned = super().clean()
@@ -90,19 +109,43 @@ class RegisterForm(BootstrapFormMixin, forms.Form):
 
 
 class LoginForm(BootstrapFormMixin, forms.Form):
-    email = forms.EmailField(label="Work email")
-    password = forms.CharField(widget=forms.PasswordInput)
+    email = forms.EmailField(
+        label="Work email",
+        widget=forms.EmailInput(attrs={"placeholder": "founder@company.com"}),
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "••••••••"}),
+        label="Password",
+    )
 
 
 class ForgotPasswordForm(BootstrapFormMixin, forms.Form):
     email = forms.EmailField(
-        label="Registered Work Email",
-        widget=forms.EmailInput(attrs={"placeholder": "founder@company.com"}),
-        help_text="Enter your registered account email to receive a password reset link.",
+        label="Registered Gmail / Work Email",
+        widget=forms.EmailInput(attrs={"placeholder": "founder@gmail.com"}),
+        help_text="Enter your registered account email to receive a 6-digit verification OTP.",
     )
 
 
 class ResetPasswordForm(BootstrapFormMixin, forms.Form):
+    email = forms.EmailField(
+        required=False,
+        label="Registered Email",
+        widget=forms.EmailInput(attrs={"placeholder": "founder@gmail.com"}),
+    )
+    otp_code = forms.CharField(
+        required=False,
+        label="6-Digit Verification OTP",
+        max_length=6,
+        min_length=6,
+        widget=forms.TextInput(attrs={
+            "placeholder": "123456",
+            "class": "otp-input text-center fw-bold fs-4",
+            "autocomplete": "one-time-code",
+            "maxlength": "6",
+        }),
+        help_text="Check your Gmail inbox for the 6-digit verification code.",
+    )
     new_password = forms.CharField(
         widget=forms.PasswordInput(attrs={"placeholder": "••••••••"}),
         validators=[password_validator],
@@ -123,10 +166,43 @@ class ResetPasswordForm(BootstrapFormMixin, forms.Form):
         return cleaned
 
 
+class LoginOTPRequestForm(BootstrapFormMixin, forms.Form):
+    email = forms.EmailField(
+        label="Registered Gmail / Work Email",
+        widget=forms.EmailInput(attrs={"placeholder": "founder@gmail.com"}),
+        help_text="We'll send a 6-digit OTP code directly to your Gmail inbox for instant authentication.",
+    )
+
+
+class LoginOTPVerifyForm(BootstrapFormMixin, forms.Form):
+    email = forms.EmailField(widget=forms.HiddenInput())
+    otp_code = forms.CharField(
+        label="6-Digit Gmail OTP",
+        max_length=6,
+        min_length=6,
+        widget=forms.TextInput(attrs={
+            "placeholder": "123456",
+            "class": "otp-input text-center fw-bold fs-4",
+            "autocomplete": "one-time-code",
+            "maxlength": "6",
+        }),
+        help_text="Enter the 6-digit code received in your Gmail inbox.",
+    )
+
+
 class StartupProfileForm(BootstrapFormMixin, forms.Form):
-    company_name = forms.CharField(max_length=200, label="Company Name")
+    company_name = forms.CharField(
+        max_length=200,
+        label="Company Name",
+        widget=forms.TextInput(attrs={"placeholder": "e.g. Acme Technologies"}),
+    )
     industry = forms.ChoiceField(choices=INDUSTRY_CHOICES, required=False, label="Industry")
-    team_size = forms.IntegerField(required=False, min_value=1, label="Team Size (Employees)")
+    team_size = forms.IntegerField(
+        required=False,
+        min_value=1,
+        label="Team Size (Employees)",
+        widget=forms.NumberInput(attrs={"placeholder": "e.g. 35", "class": "no-spinner"}),
+    )
     growth_stage = forms.ChoiceField(choices=GROWTH_STAGE_CHOICES, required=False, label="Growth Stage")
     hr_budget_monthly = forms.FloatField(
         required=False,
@@ -139,6 +215,15 @@ class StartupProfileForm(BootstrapFormMixin, forms.Form):
             "step": "any",
         }),
     )
-    location = forms.CharField(max_length=100, required=False, label="Location")
-    contact_email = forms.EmailField(required=False, label="Contact / Admin Email")
+    location = forms.CharField(
+        max_length=100,
+        required=False,
+        label="Location",
+        widget=forms.TextInput(attrs={"placeholder": "e.g. Bengaluru, India"}),
+    )
+    contact_email = forms.EmailField(
+        required=False,
+        label="Contact / Admin Email",
+        widget=forms.EmailInput(attrs={"placeholder": "hr@acme.com"}),
+    )
 

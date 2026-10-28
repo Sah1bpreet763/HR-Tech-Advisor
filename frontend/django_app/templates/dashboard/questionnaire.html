@@ -3,135 +3,19 @@
 
 {% block extra_css %}
 <style>
-  /* Stepper Tab Header */
-  .stepper-nav {
-    display: flex;
-    overflow-x: auto;
-    gap: 0.5rem;
-    padding-bottom: 0.75rem;
-    scrollbar-width: thin;
-  }
-  .stepper-nav::-webkit-scrollbar {
-    height: 4px;
-  }
-  .stepper-nav::-webkit-scrollbar-thumb {
-    background: var(--card-border);
-    border-radius: 4px;
-  }
-
-  .step-tab {
-    flex: 1 0 160px;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-sm);
-    padding: 0.75rem 1rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: var(--text-muted);
-  }
-  .step-tab:hover {
-    border-color: var(--primary-color);
-    color: var(--text-main);
-  }
-  .step-tab.active {
-    background: var(--card-bg);
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
-    color: var(--text-main);
-  }
-  .step-tab.completed {
-    border-color: var(--success-color);
-  }
-  .step-tab.completed .step-icon {
-    background: var(--success-color);
-    color: white;
-  }
-  .step-tab.active .step-icon {
-    background: var(--primary-color);
-    color: white;
-  }
-
-  .step-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background: var(--badge-bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    flex-shrink: 0;
-    transition: all 0.2s ease;
-  }
-
-  /* Option Radio Card */
-  .option-card {
-    position: relative;
-    border: 1.5px solid var(--card-border);
-    border-radius: var(--radius-sm);
-    padding: 0.85rem 1.15rem;
-    margin-bottom: 0.65rem;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.85rem;
-    background-color: var(--card-bg);
-  }
-  .option-card:hover {
-    border-color: var(--primary-color);
-    transform: translateX(2px);
-  }
-  .option-card input[type="radio"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 2px solid var(--card-border);
-    border-radius: 50%;
-    outline: none;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: all 0.15s ease;
-  }
-  .option-card input[type="radio"]:checked {
-    border-color: var(--primary-color);
-    background-color: var(--primary-color);
-  }
-  .option-card input[type="radio"]:checked::after {
-    content: "";
-    width: 6px;
-    height: 6px;
-    background-color: white;
-    border-radius: 50%;
-  }
-
-  .option-card.selected {
-    border-color: var(--primary-color);
-    background-color: var(--primary-subtle);
-  }
-
   .question-item {
-    padding: 1.25rem;
-    border-bottom: 1px solid var(--card-border);
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1.5px solid var(--border-subtle);
   }
   .question-item:last-child {
     border-bottom: none;
   }
-
   .progress-fixed-header {
     background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-md);
-    padding: 1rem 1.25rem;
+    border: var(--neo-border-sm);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--neo-shadow-sm);
   }
 </style>
 {% endblock %}
@@ -141,27 +25,26 @@
   <div class="col-lg-10 col-xl-9">
     
     <!-- Questionnaire Header & Progress Tracker -->
-    <div class="progress-fixed-header shadow-sm mb-4">
+    <div class="progress-fixed-header mb-4">
       <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-2">
         <div class="d-flex align-items-center gap-3">
           <a href="{% url 'dashboard:home' %}" class="page-back-btn" title="Back to Dashboard" aria-label="Back to Dashboard">
             <i class="bi bi-arrow-left"></i>
           </a>
           <div>
-            <span class="badge bg-primary-subtle text-primary fw-bold text-uppercase px-2 py-1 mb-1">Module 3 Diagnostic</span>
-            <h4 class="fw-bold mb-0">Digital HR Maturity Audit</h4>
+            <h4 class="fw-black mb-0">Digital HR Maturity Audit</h4>
           </div>
         </div>
         <div class="text-sm-end">
           <div class="fw-bold small text-muted">
             <span id="answeredCount">0</span> of {{ total_questions }} Questions Completed
           </div>
-          <span id="percentText" class="badge bg-dark fw-bold">0%</span>
+          <span id="percentText" class="badge bg-primary-subtle text-dark fw-bold fs-6">0%</span>
         </div>
       </div>
 
-      <div class="progress" style="height: 8px; border-radius: 4px; background-color: var(--card-border);">
-        <div id="progressBar" class="progress-bar bg-primary" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+      <div class="progress" style="height: 10px; border: 1.5px solid var(--border-dark); border-radius: 6px; background-color: var(--input-bg);">
+        <div id="progressBar" class="progress-bar bg-warning" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
     </div>
 
@@ -173,7 +56,7 @@
             <i class="bi {{ cat.icon }}"></i>
           </div>
           <div class="overflow-hidden">
-            <div class="small text-muted" style="font-size: 0.75rem;">Domain {{ forloop.counter }}/{{ categories|length }}</div>
+            <div class="small text-muted" style="font-size: 0.72rem;">Domain {{ forloop.counter }}/{{ categories|length }}</div>
             <div class="fw-bold text-truncate" style="font-size: 0.85rem;">{{ cat.name }}</div>
           </div>
         </div>
@@ -185,15 +68,15 @@
       {% csrf_token %}
 
       {% for cat in categories %}
-        <div class="category-step card shadow-sm border-0 mb-4" id="step_{{ forloop.counter0 }}" style="{% if not forloop.first %}display: none;{% endif %}">
+        <div class="category-step card neo-card mb-4" id="step_{{ forloop.counter0 }}" style="{% if not forloop.first %}display: none;{% endif %}">
           <!-- Category Header -->
-          <div class="card-header bg-transparent border-bottom p-4">
+          <div class="card-header border-bottom p-4">
             <div class="d-flex align-items-center gap-3">
-              <div class="brand-icon" style="width: 40px; height: 40px; font-size: 1.2rem;">
+              <div class="brand-icon" style="width: 44px; height: 44px; font-size: 1.3rem;">
                 <i class="bi {{ cat.icon }}"></i>
               </div>
               <div>
-                <h5 class="fw-bold mb-0">{{ cat.name }}</h5>
+                <h5 class="fw-black mb-0">{{ cat.name }}</h5>
                 <p class="text-muted small mb-0">{{ cat.description }}</p>
               </div>
             </div>
@@ -204,7 +87,7 @@
             {% for q in cat.questions %}
               <div class="question-item" id="q_box_{{ q.id }}">
                 <div class="d-flex align-items-start gap-2 mb-3">
-                  <span class="badge bg-secondary-subtle text-secondary fw-semibold">{{ forloop.counter }}</span>
+                  <span class="badge bg-secondary-subtle text-dark fw-bold">{{ forloop.counter }}</span>
                   <h6 class="fw-bold mb-0 mt-0.5" style="line-height: 1.4;">{{ q.text }}</h6>
                 </div>
 
@@ -216,7 +99,7 @@
                              id="opt_{{ opt.id }}" 
                              value="{{ opt.id }}"
                              {% if selected_answers and selected_answers|dictsort:q.id == opt.id %}checked{% endif %}>
-                      <span class="small fw-medium">{{ opt.label }}</span>
+                      <span class="small fw-bold">{{ opt.label }}</span>
                     </label>
                   {% endfor %}
                 </div>
@@ -225,7 +108,7 @@
           </div>
 
           <!-- Step Footer Controls -->
-          <div class="card-footer bg-transparent border-top p-4 d-flex justify-content-between align-items-center">
+          <div class="card-footer border-top p-4 d-flex justify-content-between align-items-center">
             {% if not forloop.first %}
               <button type="button" class="btn btn-outline-secondary" onclick="switchStep({{ forloop.counter0|add:'-1' }})">
                 <i class="bi bi-arrow-left me-1"></i> Previous Domain
@@ -241,7 +124,7 @@
                 Next Domain <i class="bi bi-arrow-right ms-1"></i>
               </button>
             {% else %}
-              <button type="button" class="btn btn-success fw-bold px-4" onclick="validateAndSubmit()">
+              <button type="button" class="btn btn-primary fw-bold px-4" onclick="validateAndSubmit()">
                 <i class="bi bi-check2-circle me-1"></i> Submit Audit & View Health Score
               </button>
             {% endif %}
@@ -297,12 +180,10 @@
   function switchStep(targetIndex) {
     if (targetIndex < 0 || targetIndex >= totalSteps) return;
 
-    // Hide all steps, show target
     document.querySelectorAll('.category-step').forEach((el, idx) => {
       el.style.display = idx === targetIndex ? 'block' : 'none';
     });
 
-    // Update stepper tabs
     document.querySelectorAll('.step-tab').forEach((tab, idx) => {
       if (idx === targetIndex) {
         tab.classList.add('active');
@@ -330,7 +211,6 @@
       }
     });
 
-    // Advance to next step
     switchStep(stepIdx + 1);
   }
 
@@ -342,7 +222,6 @@
       const missingCount = totalQuestions - checkedRadios.length;
       alert(`Please answer all ${totalQuestions} questions before submitting. (${missingCount} questions left)`);
 
-      // Find first unanswered question and navigate to its step
       let foundStep = -1;
       document.querySelectorAll('.category-step').forEach((stepEl, sIdx) => {
         if (foundStep === -1) {
@@ -368,7 +247,6 @@
     form.submit();
   }
 
-  // Initialize radio selection styling on page load
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
       const parentCard = radio.closest('.option-card');

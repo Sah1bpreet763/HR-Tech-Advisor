@@ -258,14 +258,15 @@ class Report(Base):
 
 class PasswordResetToken(Base):
     """
-    Secure password reset token for forgot-password workflow.
-    Valid for 1 hour from creation and invalidated upon use.
+    Secure password reset token & OTP for forgot-password workflow.
+    Valid for 15-60 minutes from creation and invalidated upon use.
     """
     __tablename__ = "password_reset_tokens"
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     token = Column(String, unique=True, index=True, nullable=False)
+    otp_code = Column(String(6), index=True, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     expires_at = Column(DateTime, nullable=False)
     is_used = Column(Boolean, default=False)
@@ -274,6 +275,30 @@ class PasswordResetToken(Base):
 
     def __repr__(self):
         return f"<PasswordResetToken user_id={self.user_id} is_used={self.is_used}>"
+
+
+class EmailOTP(Base):
+    """
+    Stores 6-digit verification OTPs sent to Gmail for:
+    - "reset_password": Resetting password when user clicks forgot password
+    - "login": One-time password verification for logging in
+    Valid for 15 minutes and invalidated upon use.
+    """
+    __tablename__ = "email_otps"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    email = Column(String, index=True, nullable=False)
+    otp_code = Column(String(6), index=True, nullable=False)
+    purpose = Column(String, default="reset_password")  # "reset_password" or "login"
+    created_at = Column(DateTime, default=datetime.utcnow)
+    expires_at = Column(DateTime, nullable=False)
+    is_used = Column(Boolean, default=False)
+
+    user = relationship("User")
+
+    def __repr__(self):
+        return f"<EmailOTP email={self.email!r} purpose={self.purpose!r} is_used={self.is_used}>"
 
 
 # Helpful composite index for the common "latest audit for a startup" query.

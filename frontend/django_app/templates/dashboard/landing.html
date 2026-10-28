@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}HR-Tech Advisor — AI-Based Digital HR Audit{% endblock %}
+
+{% block content %}
+<!-- Intro -->
+<div class="row align-items-center g-4 mb-5 pt-3" id="about">
+  <div class="col-lg-7">
+    <div class="text-muted small fw-bold mb-2 tracking-wide">
+      Hi, welcome to HR-Tech Advisor
+    </div>
+
+    <h1 class="neo-hero-headline">
+      I DESIGN FOR<br>GROWTH.
+    </h1>
+
+    <p class="neo-hero-subtitle">
+      I'm an AI Growth HR-Tech Advisor with deep startup expertise. Specialized in helping 35-person startups diagnose operational bottlenecks, automate attendance, and match tools strictly within ₹10,000/month budgets.
+    </p>
+
+    <div class="d-flex flex-wrap align-items-center gap-3">
+      <a href="{% url 'accounts:register' %}" class="btn btn-primary px-4 py-3 fs-6">
+        Start growing
+      </a>
+      <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary px-4 py-3 fs-6">
+        Founder Sign In
+      </a>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="hero-visual-frame mx-auto" style="max-width: 380px; min-height: 380px; position: relative;">
+      <div class="floating-hero-sticker sticker-top-left" style="background-color: var(--accent-mint); font-size: 0.85rem; padding: 8px 14px;">
+        <i class="bi bi-bar-chart-fill fs-6"></i>
+        <span>HR Audit</span>
+      </div>
+
+      <div class="floating-hero-sticker sticker-side-gold" style="background-color: var(--accent-yellow);">
+        <i class="bi bi-eye-fill"></i>
+      </div>
+
+      <div class="floating-hero-sticker sticker-bottom-right" style="background-color: var(--accent-mint); font-size: 0.82rem; padding: 6px 14px;">
+        <span style="color: #047857;">●</span>
+        <span>Available for audits</span>
+      </div>
+
+      <div class="d-flex flex-column align-items-center justify-content-center p-3 h-100" style="min-height: 320px;">
+        <div class="card neo-card p-4 text-center w-100" style="background: #ffffff; border: 2.5px solid #18181b;">
+          <div class="brand-icon mx-auto mb-3" style="width: 64px; height: 64px; font-size: 1.85rem; background: var(--accent-yellow);">
+            <i class="bi bi-person-fill-check"></i>
+          </div>
+          <h4 class="fw-black mb-1">Kristina &bull; HR Advisor</h4>
+          <p class="text-muted small mb-3">
+            Startup HR diagnostics, maturity scoring, and budget tool optimization.
+          </p>
+          <div class="d-inline-flex justify-content-center align-items-center gap-2 p-2 rounded" style="background: var(--accent-mint-subtle); border: 1.5px solid var(--border-dark);">
+            <span class="small fw-bold text-dark">Maturity Score: <strong>67 / 100 GOOD</strong></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="mb-5 pt-4" id="what-i-do">
+  <div class="text-center mb-5">
+    <div class="text-muted small fw-bold mb-1 tracking-wide">
+      HR expertise for growing teams
+    </div>
+    <h2 class="fw-black mb-1" style="font-size: 2.2rem;">
+      What I can do for you
+    </h2>
+  </div>
+
+  <div class="row g-4">
+    <!-- Card 1: HR Audit -->
+    <div class="col-md-4">
+      <div class="neo-feature-card">
+        <div class="neo-icon-badge lilac">
+          <i class="bi bi-layout-text-window-reverse"></i>
+        </div>
+        <h4 class="fw-black mb-2" style="font-size: 1.3rem;">HR Audits &amp; Maturity Scoring</h4>
+        <p class="text-muted small mb-0 flex-grow-1" style="line-height: 1.6;">
+          Assess recruitment, payroll, attendance, engagement, performance, and HR analytics to identify operational gaps.
+        </p>
+      </div>
+    </div>
+
+    <!-- Card 2: Performance and engagement -->
+    <div class="col-md-4">
+      <div class="neo-feature-card">
+        <div class="neo-icon-badge mint">
+          <i class="bi bi-bullseye"></i>
+        </div>
+        <h4 class="fw-black mb-2" style="font-size: 1.3rem;">Performance &amp; Engagement</h4>
+        <p class="text-muted small mb-0 flex-grow-1" style="line-height: 1.6;">
+          Review performance management and employee engagement practices to help strengthen your people operations.
+        </p>
+      </div>
+    </div>
+
+    <!-- Card 3: HR tool recommendations -->
+    <div class="col-md-4">
+      <div class="neo-feature-card">
+        <div class="neo-icon-badge pink">
+          <i class="bi bi-circle-square"></i>
+        </div>
+        <h4 class="fw-black mb-2" style="font-size: 1.3rem;">HR Tool Recommendations</h4>
+        <p class="text-muted small mb-0 flex-grow-1" style="line-height: 1.6;">
+          Find HR tools matched to your startup's identified gaps, team size, and monthly budget.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card neo-card p-4 p-md-5 mb-5" id="diagnostic" style="background-color: var(--accent-yellow-subtle) !important;">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-8">
+      <span class="badge bg-dark text-white fw-bold px-3 py-1 mb-2">5-Minute Founder Diagnostic</span>
+      <h3 class="fw-black mb-2">"I have a 35-person startup. My HR budget is ₹10,000/month."</h3>
+      <p class="text-muted small mb-0" style="max-width: 620px;">
+        Answer ~20–30 structured questions &bull; Get your overall HR Health Score (e.g. 67/100 Good) &bull; Identify critical gaps (Attendance, Performance, Analytics) &bull; Receive tool fit matches (94% Fit) &bull; Download official PDF Report.
+      </p>
+    </div>
+    <div class="col-lg-4 text-lg-end">
+      <a href="{% url 'accounts:register' %}" class="btn btn-primary px-4 py-3 fs-6">
+        Start Diagnostic Now <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

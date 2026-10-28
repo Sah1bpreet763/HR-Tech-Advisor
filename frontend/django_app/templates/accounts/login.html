@@ -1,62 +1,155 @@
 {% extends "base.html" %}
-{% block title %}Log In — HR-Tech Advisor{% endblock %}
+{% block title %}Sign In — HR-Tech Advisor{% endblock %}
 {% block content %}
-<div class="row justify-content-center pt-4">
-  <div class="col-md-5 col-lg-4">
+<div class="row justify-content-center pt-3">
+  <div class="col-md-6 col-lg-5 col-xl-4">
     <div class="text-center mb-4">
-      <div class="brand-icon mx-auto mb-2" style="width: 44px; height: 44px; font-size: 1.3rem;">
+      <div class="brand-icon mx-auto mb-2" style="width: 50px; height: 50px; font-size: 1.5rem;">
         <i class="bi bi-shield-lock-fill"></i>
       </div>
-      <h2 class="fw-bold mb-1">Founder Sign In</h2>
+      <h2 class="fw-black mb-1">Founder Sign In</h2>
       <p class="text-muted small">Access your HR maturity diagnostic & tool recommendations</p>
     </div>
 
-    <div class="card shadow-sm border-0">
-      <div class="card-body p-4">
-        {% if form.non_field_errors %}
-          <div class="alert alert-danger py-2 small d-flex align-items-center gap-2">
-            <i class="bi bi-exclamation-circle-fill"></i>
-            <div>{{ form.non_field_errors }}</div>
-          </div>
-        {% endif %}
+    <div class="card neo-card mb-4">
+      <div class="card-body p-4 p-sm-5">
 
-        <form method="post" novalidate>
-          {% csrf_token %}
-          <div class="mb-3">
-            <label class="form-label small fw-semibold">Work Email</label>
-            {{ form.email }}
-            {% if form.email.errors %}
-              <div class="text-danger small mt-1">{{ form.email.errors|striptags }}</div>
-            {% endif %}
-          </div>
-
-          <div class="mb-3">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-              <label class="form-label small fw-semibold mb-0">Password</label>
-              <a href="{% url 'accounts:forgot_password' %}" class="small text-decoration-none fw-medium" style="color: var(--primary-color);">
-                Forgot password?
-              </a>
-            </div>
-            <div class="input-group">
-              {{ form.password }}
-              <button class="btn btn-outline-secondary toggle-password-btn" type="button" tabindex="-1" title="Toggle password visibility">
-                <i class="bi bi-eye"></i>
-              </button>
-            </div>
-            {% if form.password.errors %}
-              <div class="text-danger small mt-1">{{ form.password.errors|striptags }}</div>
-            {% endif %}
-          </div>
-
-          <button type="submit" class="btn btn-primary w-100 py-2 mt-2">
-            <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+        <!-- Neo Tab Switcher -->
+        <div class="neo-tab-nav mb-4" role="tablist">
+          <button type="button" class="neo-tab-btn {% if active_tab != 'otp' %}active{% endif %}" id="tabBtnPassword" onclick="switchLoginTab('password')">
+            <i class="bi bi-key-fill"></i> Password
           </button>
-        </form>
+          <button type="button" class="neo-tab-btn {% if active_tab == 'otp' %}active{% endif %}" id="tabBtnOtp" onclick="switchLoginTab('otp')">
+            <i class="bi bi-envelope-check-fill"></i> Gmail OTP
+          </button>
+        </div>
+
+        <!-- 1. Password Login Pane -->
+        <div id="panePassword" style="{% if active_tab == 'otp' %}display: none;{% endif %}">
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger py-2 small d-flex align-items-center gap-2 mb-3">
+              <i class="bi bi-exclamation-circle-fill"></i>
+              <div>{{ form.non_field_errors }}</div>
+            </div>
+          {% endif %}
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="auth_action" value="password">
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Work / Gmail Email</label>
+              {{ form.email }}
+              {% if form.email.errors %}
+                <div class="text-danger small mt-1">{{ form.email.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="form-label small fw-bold mb-0">Password</label>
+                <a href="{% url 'accounts:forgot_password' %}" class="small text-decoration-none fw-bold" style="color: var(--text-main);">
+                  Forgot password?
+                </a>
+              </div>
+              <div class="input-group">
+                {{ form.password }}
+                <button class="btn btn-outline-secondary toggle-password-btn" type="button" tabindex="-1" title="Toggle password visibility">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+              {% if form.password.errors %}
+                <div class="text-danger small mt-1">{{ form.password.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 mt-3">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Sign In with Password
+            </button>
+          </form>
+        </div>
+
+        <!-- 2. Gmail OTP Login Pane -->
+        <div id="paneOtp" style="{% if active_tab != 'otp' %}display: none;{% endif %}">
+          {% if otp_sent_to %}
+            <!-- Step 2: Enter OTP received in Gmail -->
+            <div class="alert alert-success p-3 mb-3" style="background-color: var(--accent-mint-subtle); border: 2px solid var(--border-dark);">
+              <div class="d-flex align-items-center gap-2 text-dark fw-bold small mb-1">
+                <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                <span>OTP Dispatched!</span>
+              </div>
+              <p class="small text-muted mb-0" style="font-size: 0.84rem;">
+                A 6-digit verification code was sent to <strong>{{ otp_sent_to }}</strong>.
+              </p>
+            </div>
+
+            {% if otp_verify_form.non_field_errors %}
+              <div class="alert alert-danger py-2 small d-flex align-items-center gap-2 mb-3">
+                <i class="bi bi-exclamation-circle-fill"></i>
+                <div>{{ otp_verify_form.non_field_errors }}</div>
+              </div>
+            {% endif %}
+
+            <form method="post" novalidate>
+              {% csrf_token %}
+              <input type="hidden" name="auth_action" value="verify_otp">
+              {{ otp_verify_form.email }}
+
+              <div class="mb-3 text-center">
+                <label class="form-label small fw-bold text-center d-block">Enter 6-Digit Gmail OTP</label>
+                {{ otp_verify_form.otp_code }}
+                <div class="form-text small mt-2">Enter the verification code from your Gmail inbox.</div>
+                {% if otp_verify_form.otp_code.errors %}
+                  <div class="text-danger small mt-1">{{ otp_verify_form.otp_code.errors|striptags }}</div>
+                {% endif %}
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100 py-2 mt-2">
+                <i class="bi bi-patch-check-fill me-1"></i> Verify OTP & Log In
+              </button>
+
+              <div class="text-center mt-3">
+                <a href="{% url 'accounts:login' %}" class="small text-muted text-decoration-none fw-semibold">
+                  <i class="bi bi-arrow-left me-1"></i> Use another email or method
+                </a>
+              </div>
+            </form>
+
+          {% else %}
+            <!-- Step 1: Request OTP to Gmail -->
+            {% if otp_request_form.non_field_errors %}
+              <div class="alert alert-danger py-2 small d-flex align-items-center gap-2 mb-3">
+                <i class="bi bi-exclamation-circle-fill"></i>
+                <div>{{ otp_request_form.non_field_errors }}</div>
+              </div>
+            {% endif %}
+
+            <form method="post" novalidate>
+              {% csrf_token %}
+              <input type="hidden" name="auth_action" value="request_otp">
+
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Your Registered Gmail / Email</label>
+                {{ otp_request_form.email }}
+                {% if otp_request_form.email.help_text %}
+                  <div class="form-text small">{{ otp_request_form.email.help_text }}</div>
+                {% endif %}
+                {% if otp_request_form.email.errors %}
+                  <div class="text-danger small mt-1">{{ otp_request_form.email.errors|striptags }}</div>
+                {% endif %}
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100 py-2 mt-2">
+                <i class="bi bi-send-fill me-1"></i> Send Login OTP to Gmail
+              </button>
+            </form>
+          {% endif %}
+        </div>
 
         <div class="text-center mt-4 pt-3 border-top small text-muted">
-          New to HR-Tech Advisor? 
-          <a href="{% url 'accounts:register' %}" class="fw-semibold text-decoration-none" style="color: var(--primary-color);">
-            Create an account
+          Don't have an account yet? 
+          <a href="{% url 'accounts:register' %}" class="fw-bold text-decoration-none" style="color: var(--text-main);">
+            Register Startup
           </a>
         </div>
       </div>
@@ -65,3 +158,25 @@
 </div>
 {% endblock %}
 
+{% block extra_js %}
+<script>
+  function switchLoginTab(tab) {
+    const panePassword = document.getElementById('panePassword');
+    const paneOtp = document.getElementById('paneOtp');
+    const tabBtnPassword = document.getElementById('tabBtnPassword');
+    const tabBtnOtp = document.getElementById('tabBtnOtp');
+
+    if (tab === 'otp') {
+      panePassword.style.display = 'none';
+      paneOtp.style.display = 'block';
+      tabBtnOtp.classList.add('active');
+      tabBtnPassword.classList.remove('active');
+    } else {
+      paneOtp.style.display = 'none';
+      panePassword.style.display = 'block';
+      tabBtnPassword.classList.add('active');
+      tabBtnOtp.classList.remove('active');
+    }
+  }
+</script>
+{% endblock %}

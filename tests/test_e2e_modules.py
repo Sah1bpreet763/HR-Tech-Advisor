@@ -20,6 +20,19 @@ def db():
     session.close()
 
 
+def ensure_test_account(db, email):
+    user = db.query(models.User).filter(models.User.email == email).first()
+    if user:
+        return user
+
+    user = models.User(email=email, hashed_password="test-hash")
+    db.add(user)
+    db.flush()
+    db.add(models.Startup(user_id=user.id, company_name="Test Startup"))
+    db.commit()
+    return user
+
+
 def test_module_1_framework_integrity(db):
     """Confirm 6 categories and 30 questions are populated and configured."""
     categories = db.query(models.Category).all()
@@ -80,15 +93,37 @@ def test_module_2_registration_and_login(db):
     assert bad_login.status_code == 401
 
 
-def test_module_2_forgot_and_reset_password(db):
+def test_module_2_forgot_and_reset_password(db, monkeypatch):
     """Test secure token generation, verification, and password reset."""
     test_email = "testfounder_flow@startup.io"
+    ensure_test_account(db, test_email)
+
+    monkeypatch.setattr(
+        "backend.api.auth.send_verification_otp_email",
+        lambda **kwargs: (False, "SMTP is unavailable"),
+    )
+    failed_delivery = client.post("/api/auth/forgot-password", json={"email": test_email})
+    assert failed_delivery.status_code == 503
+    assert "otp_code" not in failed_delivery.json()
+    failed_otp = db.query(models.EmailOTP).filter(
+        models.EmailOTP.email == test_email,
+        models.EmailOTP.purpose == "reset_password",
+    ).order_by(models.EmailOTP.id.desc()).first()
+    assert failed_otp is not None
+    assert failed_otp.is_used is True
+
+    monkeypatch.setattr(
+        "backend.api.auth.send_verification_otp_email",
+        lambda **kwargs: (True, "sent"),
+    )
 
     # Request password reset
     forgot_resp = client.post("/api/auth/forgot-password", json={"email": test_email})
     assert forgot_resp.status_code == 200
     forgot_data = forgot_resp.json()
     assert "instructions" in forgot_data["message"].lower()
+    assert "otp_code" not in forgot_data
+    assert "reset_url" not in forgot_data
 
     # Find the token in the database
     user = db.query(models.User).filter(models.User.email == test_email).first()
@@ -206,3 +241,92 @@ def test_module_10_pdf_report_generation(db):
     assert pdf_resp.headers["content-type"] == "application/pdf"
     assert pdf_resp.content.startswith(b"%PDF")
     assert len(pdf_resp.content) > 1000
+
+
+def test_module_2_otp_authentication_flow(db, monkeypatch):
+    """Test full OTP authentication flow: request OTP, verify OTP, reset password with OTP, and login with OTP."""
+    test_email = "testfounder_flow@startup.io"
+    ensure_test_account(db, test_email)
+    monkeypatch.setattr(
+        "backend.api.auth.send_verification_otp_email",
+        lambda **kwargs: (True, "sent"),
+    )
+
+    # 1. Request OTP for forgot password
+    forgot_resp = client.post("/api/auth/forgot-password", json={"email": test_email})
+    assert forgot_resp.status_code == 200
+    forgot_data = forgot_resp.json()
+    assert "otp" in forgot_data["message"].lower()
+    assert "otp_code" not in forgot_data
+
+    # Find the OTP in database
+    otp_record = db.query(models.EmailOTP).filter(
+        models.EmailOTP.email == test_email,
+        models.EmailOTP.purpose == "reset_password",
+        models.EmailOTP.is_used == False,
+    ).order_by(models.EmailOTP.id.desc()).first()
+    assert otp_record is not None
+    otp_code = otp_record.otp_code
+    assert len(otp_code) == 6
+
+    # 2. Verify OTP endpoint
+    verify_resp = client.post("/api/auth/verify-otp", json={
+        "email": test_email,
+        "otp_code": otp_code,
+        "purpose": "reset_password",
+    })
+    assert verify_resp.status_code == 200
+    assert verify_resp.json()["valid"] is True
+
+    # 3. Reset password using OTP
+    new_password = "SecureOtpPassword789"
+    reset_resp = client.post("/api/auth/reset-password-otp", json={
+        "email": test_email,
+        "otp_code": otp_code,
+        "new_password": new_password,
+    })
+    assert reset_resp.status_code == 200
+
+    # Confirm OTP is now marked as used
+    db.refresh(otp_record)
+    assert otp_record.is_used is True
+
+    # 4. Verify user can log in with new password
+    login_resp = client.post("/api/auth/login", json={"email": test_email, "password": new_password})
+    assert login_resp.status_code == 200
+
+    # 5. Test Gmail OTP Login flow
+    monkeypatch.setattr(
+        "backend.api.auth.send_verification_otp_email",
+        lambda **kwargs: (False, "SMTP is unavailable"),
+    )
+    failed_login_otp = client.post(
+        "/api/auth/send-login-otp",
+        json={"email": test_email},
+    )
+    assert failed_login_otp.status_code == 503
+    assert "otp_code" not in failed_login_otp.json()
+
+    monkeypatch.setattr(
+        "backend.api.auth.send_verification_otp_email",
+        lambda **kwargs: (True, "sent"),
+    )
+    send_otp_resp = client.post("/api/auth/send-login-otp", json={"email": test_email})
+    assert send_otp_resp.status_code == 200
+    assert "otp_code" not in send_otp_resp.json()
+
+    login_otp_record = db.query(models.EmailOTP).filter(
+        models.EmailOTP.email == test_email,
+        models.EmailOTP.purpose == "login",
+        models.EmailOTP.is_used == False,
+    ).order_by(models.EmailOTP.id.desc()).first()
+    assert login_otp_record is not None
+    login_otp_code = login_otp_record.otp_code
+
+    # 6. Verify login with OTP
+    verify_login_resp = client.post("/api/auth/verify-login-otp", json={
+        "email": test_email,
+        "otp_code": login_otp_code,
+    })
+    assert verify_login_resp.status_code == 200
+    assert "user_id" in verify_login_resp.json()

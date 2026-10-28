@@ -35,6 +35,16 @@ CATEGORY_META = {
 }
 
 
+def landing_view(request):
+    """
+    Public Landing Page styled in the exact Neo-Brutalist desktop aesthetic.
+    If already authenticated, redirects directly to the founder dashboard.
+    """
+    if request.session.get("user_id"):
+        return redirect("dashboard:home")
+    return render(request, "dashboard/landing.html")
+
+
 @session_login_required
 def home_view(request):
     startup_id = request.session["startup_id"]

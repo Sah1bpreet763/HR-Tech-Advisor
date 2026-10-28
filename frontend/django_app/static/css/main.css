@@ -1,0 +1,1001 @@
+/* ==========================================================================
+   HR-Tech Advisor — Neo-Brutalism Modern SaaS Design System
+   Inspired by Figma / Gumroad modern playful Neo-Brutalist aesthetic:
+   - Warm pastel canvas & desktop container frame with rounded corners
+   - Deep solid borders (2px - 2.5px solid #18181b)
+   - Hard offset shadows (box-shadow: 4px 4px 0px #18181b)
+   - Bold butter-yellow action buttons with tactile press interactions
+   - Colorful playful icon badges (mint, lilac, coral, yellow)
+   - Clean, high-contrast, non-AI typography (zero gradient/double-shade text)
+   ========================================================================== */
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Color Palette — Neo-Brutalist Light Mode */
+  --outer-bg: #faeee1;
+  --canvas-bg: #ffffff;
+  --card-bg: #ffffff;
+  --input-bg: #fffdfa;
+  
+  --border-dark: #18181b;
+  --border-subtle: #e4e4e7;
+  --shadow-color: #18181b;
+
+  --text-main: #18181b;
+  --text-muted: #52525b;
+  --text-light: #71717a;
+
+  /* Playful Neo-Brutalist Accent Colors */
+  --accent-yellow: #fde047;
+  --accent-yellow-hover: #facc15;
+  --accent-yellow-subtle: #fef9c3;
+
+  --accent-lilac: #c7d2fe;
+  --accent-lilac-hover: #a5b4fc;
+  --accent-lilac-subtle: #e0e7ff;
+
+  --accent-mint: #6ee7b7;
+  --accent-mint-hover: #34d399;
+  --accent-mint-subtle: #d1fae5;
+
+  --accent-pink: #f472b6;
+  --accent-pink-hover: #ec4899;
+  --accent-pink-subtle: #fce7f3;
+
+  --accent-coral: #fb7185;
+  --accent-blue: #93c5fd;
+
+  --primary-color: #18181b;
+  --primary-btn-bg: var(--accent-yellow);
+  --primary-btn-hover: var(--accent-yellow-hover);
+  --primary-btn-text: #18181b;
+
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+
+  /* Hard Offset Neo-Brutalist Shadows */
+  --neo-shadow-xs: 2px 2px 0px var(--shadow-color);
+  --neo-shadow-sm: 3px 3px 0px var(--shadow-color);
+  --neo-shadow-md: 5px 5px 0px var(--shadow-color);
+  --neo-shadow-lg: 8px 8px 0px var(--shadow-color);
+  --neo-shadow-xl: 12px 12px 0px var(--shadow-color);
+
+  --neo-border-sm: 2px solid var(--border-dark);
+  --neo-border-md: 2.5px solid var(--border-dark);
+  --neo-border-lg: 3px solid var(--border-dark);
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-pill: 9999px;
+}
+
+[data-bs-theme="dark"] {
+  --outer-bg: #0e0d11;
+  --canvas-bg: #18171d;
+  --card-bg: #212027;
+  --input-bg: #27262f;
+
+  --border-dark: #3f3e46;
+  --border-subtle: #2d2c34;
+  --shadow-color: #000000;
+
+  --text-main: #fafafa;
+  --text-muted: #a1a1aa;
+  --text-light: #71717a;
+
+  --accent-yellow: #fde047;
+  --accent-yellow-hover: #facc15;
+  --accent-yellow-subtle: rgba(253, 224, 71, 0.15);
+
+  --accent-lilac: #818cf8;
+  --accent-lilac-hover: #6366f1;
+  --accent-lilac-subtle: rgba(129, 140, 248, 0.15);
+
+  --accent-mint: #34d399;
+  --accent-mint-hover: #10b981;
+  --accent-mint-subtle: rgba(52, 211, 153, 0.15);
+
+  --accent-pink: #f472b6;
+  --accent-pink-hover: #ec4899;
+  --accent-pink-subtle: rgba(244, 114, 182, 0.15);
+
+  --primary-color: #fafafa;
+  --primary-btn-bg: #fde047;
+  --primary-btn-hover: #facc15;
+  --primary-btn-text: #18181b;
+
+  --neo-border-sm: 2px solid #3f3e46;
+  --neo-border-md: 2.5px solid #3f3e46;
+  --neo-border-lg: 3px solid #3f3e46;
+}
+
+/* ==========================================================================
+   Global Reset & Layout
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--outer-bg);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  overflow-x: hidden;
+  position: relative;
+  padding: 2rem 1rem;
+}
+
+/* ==========================================================================
+   Floating Decorative Neo-Brutalist Shapes in the Outer Viewport
+   ========================================================================== */
+.floating-shape {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  border: var(--neo-border-sm);
+  box-shadow: var(--neo-shadow-sm);
+}
+
+.shape-crescent-mint {
+  top: 14%;
+  left: 2.5%;
+  width: 58px;
+  height: 32px;
+  background-color: var(--accent-mint);
+  border-radius: 0 0 60px 60px;
+  transform: rotate(-35deg);
+}
+
+.shape-disc-pink {
+  top: 60%;
+  left: 2.2%;
+  width: 72px;
+  height: 72px;
+  background-color: var(--accent-pink);
+  border-radius: 50%;
+  background-image: radial-gradient(circle, transparent 35%, var(--border-dark) 36%, var(--border-dark) 40%, transparent 41%);
+  background-size: 20px 20px;
+  transform: rotate(15deg);
+}
+
+.shape-wedge-yellow {
+  bottom: 8%;
+  right: 2.5%;
+  width: 48px;
+  height: 48px;
+  background-color: var(--accent-yellow);
+  border-radius: 50% 50% 0 50%;
+  transform: rotate(45deg);
+}
+
+.shape-crescent-pink {
+  top: 48%;
+  right: 2%;
+  width: 56px;
+  height: 80px;
+  background-color: var(--accent-pink);
+  border-radius: 0 80px 80px 0;
+  transform: rotate(15deg);
+}
+
+.shape-pill-lilac {
+  bottom: 4%;
+  left: 2%;
+  width: 44px;
+  height: 44px;
+  background-color: var(--accent-lilac);
+  border-radius: 12px;
+  transform: rotate(-20deg);
+}
+
+/* ==========================================================================
+   Main Desktop Canvas / Window Frame
+   ========================================================================== */
+.desktop-viewport-canvas {
+  position: relative;
+  max-width: 1240px;
+  margin: 0 auto;
+  background-color: var(--canvas-bg);
+  border: var(--neo-border-md);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--neo-shadow-lg);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 4rem);
+  overflow: visible;
+  transition: all 0.25s ease;
+}
+
+/* Floating top sticker (like the Figma badge in the sample) */
+.canvas-pinned-sticker {
+  position: absolute;
+  top: -24px;
+  left: 42%;
+  transform: translateX(-50%) rotate(-4deg);
+  background-color: var(--accent-lilac);
+  border: var(--neo-border-sm);
+  border-radius: 14px;
+  padding: 6px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: var(--neo-shadow-sm);
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: #18181b;
+  z-index: 1040;
+}
+
+/* Floating pointer pill on the right (like the "Kristina" pill) */
+.canvas-pinned-user-pill {
+  position: absolute;
+  top: -24px;
+  right: 24px;
+  transform: rotate(3deg);
+  background-color: var(--accent-lilac);
+  border: var(--neo-border-sm);
+  border-radius: var(--radius-pill);
+  padding: 6px 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--neo-shadow-sm);
+  font-weight: 800;
+  font-size: 0.92rem;
+  color: #18181b;
+  z-index: 1040;
+}
+.canvas-pinned-user-pill::before {
+  content: "▲";
+  position: absolute;
+  bottom: -11px;
+  left: 14px;
+  font-size: 10px;
+  color: var(--border-dark);
+  transform: rotate(140deg);
+}
+
+/* ==========================================================================
+   Header & Navigation
+   ========================================================================== */
+.app-navbar {
+  background-color: transparent !important;
+  border-bottom: var(--neo-border-sm);
+  padding: 1.25rem 2rem;
+  z-index: 1030;
+  position: relative;
+}
+
+.brand-logo {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-size: 1.2rem;
+  color: var(--text-main) !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+}
+
+.brand-icon {
+  background-color: var(--accent-yellow);
+  color: #18181b;
+  border: var(--neo-border-sm);
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 900;
+  box-shadow: var(--neo-shadow-xs);
+  flex-shrink: 0;
+}
+
+.nav-link {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text-muted) !important;
+  padding: 0.45rem 0.95rem !important;
+  border-radius: 10px;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+.nav-link:hover {
+  color: var(--text-main) !important;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+.nav-link.active {
+  color: var(--text-main) !important;
+  background-color: var(--accent-yellow-subtle);
+  border: 1.5px solid var(--border-dark);
+}
+
+/* Back navigation button */
+.back-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  border-radius: 10px;
+  border: var(--neo-border-sm);
+  background-color: var(--canvas-bg);
+  color: var(--text-main);
+  padding: 0.35rem 0.85rem;
+  font-size: 0.85rem;
+  box-shadow: var(--neo-shadow-xs);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  text-decoration: none;
+}
+.back-nav-btn:hover {
+  background-color: var(--accent-yellow-subtle);
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px var(--shadow-color);
+  color: var(--text-main);
+}
+.back-nav-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--shadow-color);
+}
+
+.page-back-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--neo-border-sm);
+  background-color: var(--canvas-bg);
+  box-shadow: var(--neo-shadow-xs);
+  color: var(--text-main);
+  text-decoration: none;
+  transition: all 0.12s ease;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.page-back-btn:hover {
+  background-color: var(--accent-yellow);
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px var(--shadow-color);
+  color: var(--text-main);
+}
+.page-back-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--shadow-color);
+}
+
+.company-pill {
+  background-color: var(--accent-lilac);
+  border: var(--neo-border-sm);
+  border-radius: var(--radius-pill);
+  padding: 0.35rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #18181b;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: var(--neo-shadow-xs);
+}
+
+.btn-theme-toggle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--neo-border-sm);
+  background-color: var(--canvas-bg);
+  color: var(--text-main);
+  box-shadow: var(--neo-shadow-xs);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.btn-theme-toggle:hover {
+  background-color: var(--accent-yellow);
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px var(--shadow-color);
+}
+.btn-theme-toggle:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--shadow-color);
+}
+
+/* ==========================================================================
+   Typography & Headers
+   ========================================================================== */
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  color: var(--text-main);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  margin-top: 0;
+}
+
+.neo-hero-headline {
+  font-size: 3.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  color: var(--text-main);
+  margin-bottom: 1.25rem;
+}
+
+@media (max-width: 768px) {
+  .neo-hero-headline {
+    font-size: 2.35rem;
+  }
+}
+
+.neo-hero-subtitle {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 520px;
+  margin-bottom: 1.75rem;
+}
+
+/* ==========================================================================
+   Buttons (Tactile Neo-Brutalist Interaction)
+   ========================================================================== */
+.btn {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+}
+
+.btn-primary, .neo-btn-primary {
+  background-color: var(--primary-btn-bg) !important;
+  color: var(--primary-btn-text) !important;
+  border: var(--neo-border-sm) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--neo-shadow-sm) !important;
+  padding: 0.65rem 1.6rem !important;
+  font-size: 0.96rem !important;
+}
+.btn-primary:hover, .neo-btn-primary:hover {
+  background-color: var(--primary-btn-hover) !important;
+  transform: translate(1px, 1px) !important;
+  box-shadow: 2px 2px 0px var(--shadow-color) !important;
+}
+.btn-primary:active, .neo-btn-primary:active {
+  transform: translate(3px, 3px) !important;
+  box-shadow: 0px 0px 0px var(--shadow-color) !important;
+}
+
+.btn-outline-primary, .neo-btn-outline {
+  background-color: var(--canvas-bg) !important;
+  color: var(--text-main) !important;
+  border: var(--neo-border-sm) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--neo-shadow-sm) !important;
+  padding: 0.65rem 1.4rem !important;
+}
+.btn-outline-primary:hover, .neo-btn-outline:hover {
+  background-color: var(--accent-lilac-subtle) !important;
+  color: var(--text-main) !important;
+  transform: translate(1px, 1px) !important;
+  box-shadow: 2px 2px 0px var(--shadow-color) !important;
+}
+.btn-outline-primary:active, .neo-btn-outline:active {
+  transform: translate(3px, 3px) !important;
+  box-shadow: 0px 0px 0px var(--shadow-color) !important;
+}
+
+.btn-outline-secondary {
+  border: var(--neo-border-sm) !important;
+  color: var(--text-main) !important;
+  background-color: var(--canvas-bg) !important;
+  box-shadow: var(--neo-shadow-xs) !important;
+  border-radius: var(--radius-sm) !important;
+}
+.btn-outline-secondary:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  color: var(--text-main) !important;
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0px var(--shadow-color) !important;
+}
+
+.btn-sm {
+  padding: 0.35rem 0.85rem !important;
+  font-size: 0.85rem !important;
+  border-radius: 10px !important;
+}
+
+/* ==========================================================================
+   Cards & Panels
+   ========================================================================== */
+.card, .glass-card, .neo-card {
+  background-color: var(--card-bg) !important;
+  border: var(--neo-border-sm) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--neo-shadow-md) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  overflow: hidden;
+}
+.card:hover, .neo-card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: var(--neo-shadow-lg) !important;
+}
+
+.card-header, .card-footer {
+  background-color: transparent !important;
+  border-color: var(--border-dark) !important;
+  padding: 1.25rem 1.5rem;
+}
+
+/* 3-Column Feature Cards matching "What I can do for you" in the sample */
+.neo-feature-card {
+  background-color: var(--card-bg);
+  border: var(--neo-border-sm);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--neo-shadow-sm);
+  padding: 1.75rem;
+  height: 100%;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  display: flex;
+  flex-direction: column;
+}
+.neo-feature-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--neo-shadow-md);
+}
+
+.neo-icon-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  border: var(--neo-border-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.45rem;
+  box-shadow: var(--neo-shadow-xs);
+  margin-bottom: 1.25rem;
+  flex-shrink: 0;
+}
+.neo-icon-badge.mint {
+  background-color: var(--accent-mint);
+  color: #064e3b;
+}
+.neo-icon-badge.lilac {
+  background-color: var(--accent-lilac);
+  color: #312e81;
+}
+.neo-icon-badge.pink {
+  background-color: var(--accent-pink);
+  color: #831843;
+}
+.neo-icon-badge.yellow {
+  background-color: var(--accent-yellow);
+  color: #713f12;
+}
+
+/* ==========================================================================
+   Hero Visual Graphic Frame (Matching Sample's Pink Outline & Badges)
+   ========================================================================== */
+.hero-visual-frame {
+  position: relative;
+  background-color: var(--accent-pink-subtle);
+  border: var(--neo-border-md);
+  border-radius: 28px;
+  padding: 2rem 1.5rem;
+  box-shadow: var(--neo-shadow-md);
+  text-align: center;
+}
+
+.floating-hero-sticker {
+  position: absolute;
+  border: var(--neo-border-sm);
+  border-radius: 12px;
+  box-shadow: var(--neo-shadow-xs);
+  font-weight: 800;
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #18181b;
+  z-index: 2;
+}
+.sticker-top-left {
+  top: -16px;
+  left: -12px;
+  background-color: var(--accent-mint);
+  transform: rotate(-6deg);
+}
+.sticker-bottom-right {
+  bottom: -14px;
+  right: -10px;
+  background-color: var(--accent-yellow);
+  transform: rotate(4deg);
+}
+.sticker-side-gold {
+  top: 40%;
+  right: -20px;
+  background-color: var(--accent-yellow);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transform: rotate(12deg);
+}
+
+/* ==========================================================================
+   Forms & Inputs
+   ========================================================================== */
+.form-label {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.01em;
+}
+
+.form-control, .form-select {
+  background-color: var(--input-bg);
+  border: var(--neo-border-sm);
+  color: var(--text-main);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.95rem;
+  font-size: 0.93rem;
+  font-weight: 500;
+  box-shadow: var(--neo-shadow-xs);
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--border-dark);
+  box-shadow: var(--neo-shadow-sm);
+  background-color: var(--input-bg);
+  color: var(--text-main);
+  outline: none;
+}
+.form-control::placeholder {
+  color: var(--text-light);
+  opacity: 0.8;
+}
+
+/* Input group with Eye Toggle */
+.input-group {
+  border-radius: var(--radius-sm);
+}
+.input-group .form-control {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+}
+.input-group .toggle-password-btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border: var(--neo-border-sm);
+  border-left: none;
+  background-color: var(--input-bg);
+  color: var(--text-main);
+  padding: 0.65rem 0.95rem;
+  box-shadow: var(--neo-shadow-xs);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.input-group .toggle-password-btn:hover {
+  background-color: var(--accent-yellow);
+}
+.input-group:focus-within .form-control,
+.input-group:focus-within .toggle-password-btn {
+  border-color: var(--border-dark);
+}
+
+/* OTP Input */
+.otp-input {
+  font-family: var(--font-mono);
+  letter-spacing: 0.5em;
+  font-size: 1.6rem !important;
+  font-weight: 800 !important;
+  text-align: center;
+  padding: 0.75rem 1rem !important;
+  background-color: var(--input-bg) !important;
+  border: var(--neo-border-md) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--neo-shadow-sm) !important;
+}
+.otp-input:focus {
+  box-shadow: var(--neo-shadow-md) !important;
+}
+
+/* Neo Tabs Switcher (Password vs OTP) */
+.neo-tab-nav {
+  display: flex;
+  background-color: var(--outer-bg);
+  border: var(--neo-border-sm);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  gap: 6px;
+  margin-bottom: 1.5rem;
+}
+.neo-tab-btn {
+  flex: 1;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.neo-tab-btn.active {
+  background-color: var(--canvas-bg);
+  color: var(--text-main);
+  border: var(--neo-border-sm);
+  box-shadow: var(--neo-shadow-xs);
+}
+
+/* ==========================================================================
+   Questionnaire Stepper & Options
+   ========================================================================== */
+.stepper-nav {
+  display: flex;
+  overflow-x: auto;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+.step-tab {
+  flex: 1 0 160px;
+  background: var(--canvas-bg);
+  border: var(--neo-border-sm);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  box-shadow: var(--neo-shadow-xs);
+  transition: all 0.15s ease;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-muted);
+}
+.step-tab:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: var(--neo-shadow-sm);
+  color: var(--text-main);
+}
+.step-tab.active {
+  background: var(--accent-yellow-subtle);
+  border-color: var(--border-dark);
+  box-shadow: var(--neo-shadow-sm);
+  color: var(--text-main);
+}
+.step-tab.completed {
+  border-color: var(--border-dark);
+}
+.step-tab.completed .step-icon {
+  background: var(--accent-mint);
+  color: #064e3b;
+}
+.step-tab.active .step-icon {
+  background: var(--accent-yellow);
+  color: #713f12;
+}
+
+.step-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: var(--neo-border-sm);
+  background: var(--canvas-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.option-card {
+  position: relative;
+  border: var(--neo-border-sm);
+  border-radius: var(--radius-md);
+  padding: 0.95rem 1.25rem;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  background-color: var(--canvas-bg);
+  box-shadow: var(--neo-shadow-xs);
+  transition: all 0.12s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+.option-card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: var(--neo-shadow-sm);
+  background-color: var(--input-bg);
+}
+.option-card.selected {
+  background-color: var(--accent-yellow-subtle);
+  border-color: var(--border-dark);
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0px var(--shadow-color);
+}
+.option-card input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: var(--neo-border-sm);
+  border-radius: 50%;
+  outline: none;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  background: var(--canvas-bg);
+}
+.option-card input[type="radio"]:checked {
+  background-color: var(--border-dark);
+}
+.option-card input[type="radio"]:checked::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background-color: var(--accent-yellow);
+  border-radius: 50%;
+}
+
+/* ==========================================================================
+   Audit Results Gauge, Gaps & Roadmap
+   ========================================================================== */
+.score-gauge-box {
+  background-color: var(--card-bg);
+  border: var(--neo-border-md);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem 2rem;
+  box-shadow: var(--neo-shadow-md);
+}
+
+.score-number {
+  font-size: 3.8rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--text-main);
+}
+
+.gap-card {
+  border: var(--neo-border-sm);
+  border-left: 6px solid var(--border-dark);
+  border-radius: var(--radius-md);
+  box-shadow: var(--neo-shadow-xs);
+  background: var(--card-bg);
+  transition: transform 0.15s ease;
+  margin-bottom: 0.75rem;
+}
+.gap-card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: var(--neo-shadow-sm);
+}
+.gap-card.priority-high {
+  border-left-color: var(--danger-color);
+}
+.gap-card.priority-medium {
+  border-left-color: var(--warning-color);
+}
+.gap-card.priority-low {
+  border-left-color: var(--success-color);
+}
+
+.tool-card {
+  border: var(--neo-border-sm);
+  border-radius: var(--radius-md);
+  background-color: var(--card-bg);
+  box-shadow: var(--neo-shadow-xs);
+  transition: all 0.15s ease;
+  margin-bottom: 1rem;
+}
+.tool-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--neo-shadow-md);
+}
+
+.roadmap-step-card {
+  position: relative;
+  border: var(--neo-border-sm);
+  border-radius: var(--radius-md);
+  background-color: var(--card-bg);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--neo-shadow-xs);
+  margin-bottom: 1rem;
+}
+
+/* Badges & Pills */
+.badge {
+  font-weight: 800 !important;
+  letter-spacing: 0.02em;
+  padding: 0.35rem 0.65rem !important;
+  border-radius: var(--radius-pill) !important;
+  border: 1.5px solid var(--border-dark) !important;
+}
+
+.bg-primary-subtle {
+  background-color: var(--accent-yellow-subtle) !important;
+  color: #713f12 !important;
+}
+.bg-success-subtle {
+  background-color: var(--accent-mint-subtle) !important;
+  color: #064e3b !important;
+}
+.bg-warning-subtle {
+  background-color: #fef3c7 !important;
+  color: #78350f !important;
+}
+.bg-danger-subtle {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+/* Tables */
+.table {
+  color: var(--text-main);
+}
+.table thead th {
+  border-bottom: var(--neo-border-sm);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  background-color: rgba(0, 0, 0, 0.02);
+}
+.table td {
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 1rem 0.75rem;
+}
+
+/* Alerts */
+.alert {
+  border: var(--neo-border-sm) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--neo-shadow-xs) !important;
+  font-weight: 600;
+}
+
+/* Footer */
+.app-footer {
+  border-top: var(--neo-border-sm);
+  padding: 1.5rem 2rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-top: auto;
+  background-color: transparent;
+}
