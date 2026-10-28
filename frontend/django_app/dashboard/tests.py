@@ -95,3 +95,70 @@ class DashboardFrontendTests(TestCase):
         self.assertContains(resp, "How do you track attendance?")
         self.assertContains(resp, "Biometric System")
         self.assertNotContains(resp, "Module 3")
+
+    @patch("dashboard.views.requests.post")
+    @patch("dashboard.views.requests.get")
+    def test_audit_results_can_show_ai_explanation(self, mock_get, mock_post):
+        def side_effect(url, **kwargs):
+            class MockResponse:
+                status_code = 200
+
+                def __init__(self, data):
+                    self._data = data
+
+                def json(self):
+                    return self._data
+
+            if "/api/audit/" in url:
+                return MockResponse({
+                    "audit_id": 7,
+                    "overall_score": 45,
+                    "status": "NEEDS IMPROVEMENT",
+                    "category_scores": [
+                        {
+                            "category": "Recruitment",
+                            "score": 35,
+                            "priority": "HIGH",
+                            "gap_description": "Recruitment needs improvement.",
+                        }
+                    ],
+                })
+            if "/api/recommendations/" in url:
+                return MockResponse([])
+            return MockResponse({
+                "id": 1,
+                "company_name": "TestCorp",
+                "industry": "Fintech",
+                "team_size": 10,
+                "hr_budget_monthly": 1000,
+            })
+
+        mock_get.side_effect = side_effect
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = {
+            "summary": "Recruitment needs attention.",
+            "actions": [
+                {
+                    "category": "Recruitment",
+                    "priority": "HIGH",
+                    "explanation": "The audit found a recruitment gap.",
+                    "next_step": "Write down a consistent applicant review process.",
+                }
+            ],
+        }
+
+        session = self.client.session
+        session["user_id"] = 1
+        session["startup_id"] = 1
+        session["company_name"] = "TestCorp"
+        session.save()
+
+        response = self.client.post(
+            reverse("dashboard:audit_results", args=[7]),
+            {"action": "explain_audit"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Recruitment needs attention.")
+        self.assertContains(response, "Write down a consistent applicant review process.")
+        self.assertEqual(mock_post.call_args.kwargs["params"], {"startup_id": 1})

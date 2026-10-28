@@ -1,9 +1,12 @@
 venv/
+.venv/
 __pycache__/
+.pytest_cache/
 *.pyc
 .env
 *.db
 db.sqlite3
+frontend/django_app/staticfiles/
 data/processed/*
 !data/processed/.gitkeep
 .DS_Store

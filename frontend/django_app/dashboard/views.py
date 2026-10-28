@@ -168,6 +168,7 @@ def audit_results_view(request, audit_id):
     Identified gaps, Tool recommendations, and the 3-Month Implementation Roadmap.
     """
     startup_id = request.session["startup_id"]
+    ai_explanation = None
     try:
         res_resp = requests.get(f"{settings.FASTAPI_BASE_URL}/api/audit/{audit_id}", timeout=5)
         if res_resp.status_code == 404:
@@ -187,6 +188,26 @@ def audit_results_view(request, audit_id):
     except requests.RequestException:
         messages.error(request, "Could not reach backend to load audit details.")
         return redirect("dashboard:home")
+
+    if request.method == "POST" and request.POST.get("action") == "explain_audit":
+        try:
+            explanation_resp = requests.post(
+                f"{settings.FASTAPI_BASE_URL}/api/audit/{audit_id}/explanation",
+                params={"startup_id": startup_id},
+                timeout=35,
+            )
+            if explanation_resp.status_code == 200:
+                ai_explanation = explanation_resp.json()
+            else:
+                try:
+                    detail = explanation_resp.json().get(
+                        "detail", "The AI explanation could not be generated."
+                    )
+                except ValueError:
+                    detail = "The AI explanation could not be generated."
+                messages.error(request, detail)
+        except requests.RequestException:
+            messages.error(request, "Could not reach the AI explanation service.")
 
     # Build 3-Month Roadmap based on gap priorities
     high_gaps = [cs for cs in audit_result["category_scores"] if cs.get("priority") == "HIGH"]
@@ -241,6 +262,7 @@ def audit_results_view(request, audit_id):
         "roadmap": roadmap,
         "startup": startup,
         "audit_id": audit_id,
+        "ai_explanation": ai_explanation,
     })
 
 
@@ -277,4 +299,3 @@ def audit_pdf_download_view(request, audit_id):
     except requests.RequestException:
         messages.error(request, "Failed to connect to report generation service.")
         return redirect("dashboard:audit_results", audit_id=audit_id)
-

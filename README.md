@@ -41,6 +41,33 @@ python manage.py runserver 8080
 
 Then open **http://127.0.0.1:8080/** in a browser.
 
+## Deploying on Render
+
+The repository includes a Render Blueprint in [`render.yaml`](./render.yaml).
+To deploy:
+
+1. Push the repository to GitHub. Do not commit `.env`, database files, virtual
+   environments, or generated `staticfiles/`.
+2. In Render, create a new **Blueprint** and connect this repository. Review the
+   PostgreSQL and web-service plans and pricing before applying the Blueprint.
+3. In the backend service environment, set `SMTP_USER`, `SMTP_PASSWORD`, and
+   `FROM_EMAIL` for OTP email. Set `AI_API_KEY` to enable Gemini explanations;
+   this key is optional. Do not add any of these secrets to Git.
+4. Wait for both services to deploy, then open the Django web service URL.
+   The frontend and backend share the provisioned PostgreSQL database.
+
+The Blueprint configures Django with `DEBUG=False`, a generated secret key,
+HTTPS-aware secure cookies, allowed hosts, and the backend service URL. If you
+change either Render service name or add a custom domain, update
+`FASTAPI_BASE_URL`, `DJANGO_ALLOWED_HOSTS`, and `DJANGO_CSRF_TRUSTED_ORIGINS`
+in the web service environment to match the actual URLs.
+
+The backend startup command creates missing tables and seed data without
+dropping existing tables. Django runs database migrations and collects static
+files before starting Gunicorn. The backend's SQLAlchemy `create_all` setup
+doesn't migrate changes to existing table schemas; add and run a migration
+before deploying future database schema changes.
+
 ### Configure Gmail OTP delivery
 
 Copy `.env.example` to `.env` in the repository root and set `SMTP_USER` to
@@ -52,6 +79,22 @@ The backend uses `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=587`, and
 `SMTP_TLS=True` for Gmail. Set `FROM_EMAIL` to the same Gmail address.
 Restart the FastAPI backend after changing these settings. Login and password
 reset OTPs are sent by email; they are not displayed in the application.
+
+### Configure the optional HR Audit Explainer
+
+The audit results page can request an AI-generated explanation of the completed
+audit's aggregate category scores. The existing deterministic scoring and tool
+recommendations remain unchanged. The feature sends category names, scores,
+priorities, and gap descriptions to Google Gemini; it does not send startup profile
+details or individual employee data.
+
+Set `AI_API_KEY` in the root `.env` file to a Gemini API key from Google AI
+Studio. Set `AI_MODEL` to a supported Gemini model (defaults to
+`gemini-2.5-flash`). Ensure the Generative Language API is enabled for the key.
+Keep the key private and never commit `.env`.
+Restart the FastAPI backend, open a completed audit, then select **Explain my
+audit**. Without a configured key or provider connection, the existing audit
+results continue to work and the page displays an error message.
 
 ## How to check Module 2 (Registration & Auth) is working
 
