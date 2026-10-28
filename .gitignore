@@ -13,3 +13,5 @@ data/processed/*
 *.log
 .vscode/
 .idea/
+.neon
+node_modules/

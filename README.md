@@ -41,32 +41,44 @@ python manage.py runserver 8080
 
 Then open **http://127.0.0.1:8080/** in a browser.
 
+### Use Neon for local development
+
+The Neon CLI writes `DATABASE_URL` to the root `.env` file. Both the FastAPI
+backend and Django frontend read that variable, so both connect to the same
+Neon database. `.env` is ignored by Git and must never be committed. If this
+URL points at a production branch, local registrations and audits will be
+written there; use a development branch for local work.
+
 ## Deploying on Render
 
-The repository includes a Render Blueprint in [`render.yaml`](./render.yaml).
-To deploy:
+The app uses one PostgreSQL database for both services. For a free demo, create
+a database on Neon, then configure the Render web services to use it:
 
 1. Push the repository to GitHub. Do not commit `.env`, database files, virtual
    environments, or generated `staticfiles/`.
-2. In Render, create a new **Blueprint** and connect this repository. Review the
-   PostgreSQL and web-service plans and pricing before applying the Blueprint.
-3. In the backend service environment, set `SMTP_USER`, `SMTP_PASSWORD`, and
-   `FROM_EMAIL` for OTP email. Set `AI_API_KEY` to enable Gemini explanations;
-   this key is optional. Do not add any of these secrets to Git.
-4. Wait for both services to deploy, then open the Django web service URL.
-   The frontend and backend share the provisioned PostgreSQL database.
-
-The Blueprint configures Django with `DEBUG=False`, a generated secret key,
-HTTPS-aware secure cookies, allowed hosts, and the backend service URL. If you
-change either Render service name or add a custom domain, update
-`FASTAPI_BASE_URL`, `DJANGO_ALLOWED_HOSTS`, and `DJANGO_CSRF_TRUSTED_ORIGINS`
-in the web service environment to match the actual URLs.
+2. Create a PostgreSQL project on Neon. Copy its pooled connection string from
+   **Connect**; keep it secret.
+3. In Render, create separate **Free Web Services** for the backend and
+   frontend. Use the build/start commands listed in [`render.yaml`](./render.yaml).
+   Do not deploy the Render Blueprint if you want to avoid creating a Render
+   PostgreSQL database.
+4. Set `DATABASE_URL` to the Neon connection string in **both** Render
+   services. Set the frontend's `FASTAPI_BASE_URL`, `DJANGO_SECRET_KEY`,
+   `DJANGO_ALLOWED_HOSTS`, and `DJANGO_CSRF_TRUSTED_ORIGINS` to their deployed
+   values. Keep all credentials in service environment settings, not Git.
+5. To enable Gemini explanations, set `AI_API_KEY` on the backend. OTP email
+   credentials (`SMTP_USER`, `SMTP_PASSWORD`, and `FROM_EMAIL`) can also be
+   configured there, but Render Free blocks outbound SMTP ports such as 587.
+   The existing SMTP-based OTP flow therefore needs an HTTPS email provider
+   integration or a host that permits SMTP.
 
 The backend startup command creates missing tables and seed data without
 dropping existing tables. Django runs database migrations and collects static
 files before starting Gunicorn. The backend's SQLAlchemy `create_all` setup
 doesn't migrate changes to existing table schemas; add and run a migration
-before deploying future database schema changes.
+before deploying future database schema changes. Free Render services can sleep
+when idle, and the Neon Free plan has usage/storage limits; check the providers'
+current limits before relying on this setup for real users or long-term data.
 
 ### Configure Gmail OTP delivery
 
@@ -148,13 +160,12 @@ JSON responses.
 
 ## Testing
 
-Run all backend and integration tests:
+Tests should use SQLite rather than your Neon database. In PowerShell, set the
+local database URL before running either suite:
 ```powershell
+$env:DATABASE_URL = "sqlite:///./database/hr_advisor.db"
 .\venv\Scripts\pytest.exe -o pythonpath=. tests/ -v
-```
 
-Run frontend Django tests:
-```powershell
-cd frontend/django_app
+Set-Location frontend/django_app
 ..\..\venv\Scripts\python.exe manage.py test
 ```

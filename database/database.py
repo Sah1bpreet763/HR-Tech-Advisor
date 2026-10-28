@@ -5,11 +5,13 @@ Creates the SQLAlchemy engine + session that every part of the backend
 (API routes, services) will import to talk to the database.
 """
 import os
+from pathlib import Path
+
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./database/hr_advisor.db")
 
@@ -25,6 +27,7 @@ if DATABASE_URL.startswith("postgresql://"):
 engine = create_engine(
     DATABASE_URL,
     connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {},
+    pool_pre_ping=True,
 )
 
 if DATABASE_URL.startswith("sqlite"):
